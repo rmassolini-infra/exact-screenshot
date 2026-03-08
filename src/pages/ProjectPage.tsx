@@ -97,6 +97,16 @@ const ProjectPage = () => {
     }
   }, [project, assets, inferencesGIE, passivo, gapSummary]);
 
+  const handleExportXml = useCallback(() => {
+    try {
+      exportXml({ project, assets: assets as any[], inferencesGIE: inferencesGIE as any[], passivo, gapSummary });
+      toast.success('XML SGPED/ANEEL exportado com sucesso!');
+    } catch (e) {
+      toast.error('Erro ao exportar XML');
+      console.error(e);
+    }
+  }, [project, assets, inferencesGIE, passivo, gapSummary]);
+
   if (!project) {
     return (
       <div className="max-w-7xl mx-auto text-center py-12">
