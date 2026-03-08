@@ -378,7 +378,7 @@ export const mockGapSummary: any[] = [
   { tipo: 'TIPO 4', desc: 'Divergência entre valor contábil e estado físico real', ativos: 8, impacto: -19000000, regulatory_ref: 'CPC 27; REN 674 Anexo I', severity: 'major', remediation_estimate: 'Ajuste de modelo financeiro' },
 ];
 
-export const mockPassivo: PassivoAjustado = {
+export const mockPassivo: any = {
   seller_price: 850000000,
   ajuste_tipo1: 42000000,
   ajuste_tipo2: 18000000,
