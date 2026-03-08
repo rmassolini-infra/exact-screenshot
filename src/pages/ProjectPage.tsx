@@ -15,6 +15,7 @@ import AssetDetailSheet from '@/components/AssetDetailSheet';
 import AssetInventoryTab from '@/components/AssetInventoryTab';
 import InferenceATGICard from '@/components/InferenceATGICard';
 import OverviewCharts from '@/components/OverviewCharts';
+import OverviewTab from '@/components/OverviewTab';
 import RagChat from '@/components/RagChat';
 import { Input } from '@/components/ui/input';
 import { exportPdf } from '@/lib/exportPdf';
