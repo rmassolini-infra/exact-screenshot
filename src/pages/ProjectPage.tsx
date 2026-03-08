@@ -249,48 +249,15 @@ const ProjectPage = () => {
         {activeTab === 'chat' && <RagChat projectId={id ?? ''} />}
 
         {activeTab === 'report' && (
-          <div className="space-y-6">
-            <div className="glass-panel-primary p-6 text-center">
-              <FileDown className="w-12 h-12 text-cyan mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Relatório Executivo ANEEL PROPDI</h3>
-              <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
-                Gere o relatório completo com inventário, valoração, inferências GIE/ATGI e Passivo Total Ajustado.
-              </p>
-              <div className="flex justify-center gap-3 flex-wrap">
-                <button onClick={handleExportPdf} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
-                  📄 Gerar PDF Executivo
-                </button>
-                <button onClick={handleExportXml} className="px-4 py-2 rounded-lg bg-muted text-muted-foreground text-sm font-medium hover:bg-muted/80 transition-colors border border-border">
-                  🗂 Exportar XML SGPED/ANEEL
-                </button>
-                <button onClick={handleExportXlsx} className="px-4 py-2 rounded-lg bg-muted text-muted-foreground text-sm font-medium hover:bg-muted/80 transition-colors border border-border">
-                  📊 Exportar XLSX Inventário
-                </button>
-              </div>
-
-              <div className="mt-8 text-left max-w-md mx-auto">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Seções incluídas:</p>
-                {[
-                  `Inventário completo de ativos (${assets.length} ativos)`,
-                  'Valoração financeira por ativo com memória de cálculo',
-                  '8 Inferências GIE com fontes rastreadas',
-                  'Auditoria ATGI: 4 tipos de gap + 6 inferências temporais',
-                  'Passivo Total Ajustado com abertura de componentes',
-                  'KPIs validados (holdout WP4)',
-                  'Documentação para homologação ANEEL PROPDI',
-                ].map(s => (
-                  <div key={s} className="flex items-center gap-2 py-1.5 text-sm">
-                    <span className="text-green-brand">✓</span>
-                    <span className="text-muted-foreground">{s}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <p className="text-center text-[10px] font-mono text-muted-foreground">
-              Gerado por Grafter Asset OS · P&D ANEEL PROPDI/PROPEE · CONFIDENCIAL
-            </p>
-          </div>
+          <ReportTab
+            project={project}
+            assets={assets as any[]}
+            inferencesGIE={inferencesGIE as any[]}
+            inferencesATGI={inferencesATGI as any[]}
+            passivo={passivo as any}
+            kpis={kpis}
+            gapSummary={gapSummary}
+          />
         )}
       </motion.div>
     </div>
