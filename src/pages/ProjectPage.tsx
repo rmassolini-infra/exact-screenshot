@@ -16,6 +16,7 @@ import RagChat from '@/components/RagChat';
 import { Input } from '@/components/ui/input';
 import { exportPdf } from '@/lib/exportPdf';
 import { exportXlsx } from '@/lib/exportXlsx';
+import { exportXml } from '@/lib/exportXml';
 
 const tabs = [
   { id: 'overview', label: 'Visão Geral', icon: Eye },
