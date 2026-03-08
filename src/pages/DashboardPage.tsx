@@ -23,18 +23,19 @@ const DashboardPage = () => {
   const { data: projects, isLoading: projectsLoading } = useProjects();
   const { data: stats } = useGlobalStats();
 
-  // Use real data if available, otherwise show mock for demo
-  const displayProjects = projects && projects.length > 0 ? projects : [];
-  const hasMockDemo = displayProjects.length === 0;
+  // Always show mock projects + any real projects from the database
+  const realProjects = projects ?? [];
+  const allProjects = [...mockProjects, ...realProjects];
+
+  const realProjectCount = realProjects.length;
+  const totalProjectCount = (stats?.projectCount ?? 0) + mockProjects.length;
 
   const metrics = [
-    { icon: FolderOpen, label: 'Projetos Ativos', value: stats?.projectCount ?? (hasMockDemo ? mockProjects.length : 0), color: 'text-cyan' },
-    { icon: Box, label: 'Ativos Catalogados', value: stats?.assetCount ?? (hasMockDemo ? 893 : 0), color: 'text-cyan' },
-    { icon: Zap, label: 'Inferências Geradas', value: stats?.inferenceCount ?? (hasMockDemo ? 34 : 0), color: 'text-amber-brand' },
-    { icon: DollarSign, label: 'Passivo Identificado', value: formatCurrency(stats?.passivoTotal ?? (hasMockDemo ? 246000000 : 0)), color: 'text-green-brand' },
+    { icon: FolderOpen, label: 'Projetos Ativos', value: totalProjectCount, color: 'text-cyan' },
+    { icon: Box, label: 'Ativos Catalogados', value: (stats?.assetCount ?? 0) + 893, color: 'text-cyan' },
+    { icon: Zap, label: 'Inferências Geradas', value: (stats?.inferenceCount ?? 0) + 34, color: 'text-amber-brand' },
+    { icon: DollarSign, label: 'Passivo Identificado', value: formatCurrency((stats?.passivoTotal ?? 0) + 246000000), color: 'text-green-brand' },
   ];
-
-  const allProjects = hasMockDemo ? mockProjects : displayProjects;
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
