@@ -371,7 +371,7 @@ export const mockTimelineEvents: any[] = [
   { id: 'te-13', asset_id: 'ast-001', layer: 'manutencao', event_date: '2024-12-15', event_type: 'inspecao', description: 'Inspeção semestral — sem anomalias. Certificação NBR 5356 vencida desde Abr/2023 (⚠ pendente renovação).', has_resolution: true, gap_type: null, severity: 'minor', source_doc: 'OS-2024-276' },
 ];
 
-export const mockGapSummary: GapSummary[] = [
+export const mockGapSummary: any[] = [
   { tipo: 'TIPO 1', desc: 'Desvio de especificação edital × as-built', ativos: 4, impacto: -42000000, regulatory_ref: 'REN 674/2015 Art. 32', severity: 'critical', remediation_estimate: '12-18 meses' },
   { tipo: 'TIPO 2', desc: 'Manutenção preventiva não executada conforme fabricante', ativos: 12, impacto: -18000000, regulatory_ref: 'MCPSE Módulo 12 §5.2', severity: 'major', remediation_estimate: '3-6 meses catch-up' },
   { tipo: 'TIPO 3', desc: 'Eventos regulatórios sem resolução ou provisão', ativos: 3, impacto: -8500000, regulatory_ref: 'REN 63/2004; Lei 9.427/1996', severity: 'critical', remediation_estimate: 'N/A — provisionar' },
