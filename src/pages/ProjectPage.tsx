@@ -295,7 +295,11 @@ const ProjectPage = () => {
                 <h3 className="font-semibold flex items-center gap-2">
                   <Clock className="w-4 h-4 text-purple-brand" /> Asset Timeline & Gap Intelligence
                 </h3>
-                <p className="text-sm text-muted-foreground">Cobertura: 82% (≥80% ✓)</p>
+                <p className="text-sm text-muted-foreground">6 Inferências Temporais · 4 Tipos de Gap · Base regulatória ANEEL</p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-muted-foreground">Impacto total gaps</p>
+                <p className="font-mono font-bold text-red-brand">{formatCurrency(gapSummary.reduce((s, g) => s + g.impacto, 0))}</p>
               </div>
             </div>
 
@@ -314,17 +318,29 @@ const ProjectPage = () => {
                   <tr className="border-b border-border">
                     <th className="px-4 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium text-left">Tipo</th>
                     <th className="px-4 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium text-left">Descrição</th>
-                    <th className="px-4 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium text-right">Ativos afetados</th>
-                    <th className="px-4 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium text-right">Impacto total</th>
+                    <th className="px-4 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium text-left">Base Regulatória</th>
+                    <th className="px-4 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium text-center">Severidade</th>
+                    <th className="px-4 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium text-right">Ativos</th>
+                    <th className="px-4 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium text-right">Impacto</th>
+                    <th className="px-4 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium text-right">Remediação</th>
                   </tr>
                 </thead>
                 <tbody>
                   {gapSummary.map(g => (
                     <tr key={g.tipo} className="border-b border-border/50">
                       <td className="px-4 py-2.5 font-mono text-red-brand text-xs">{g.tipo}</td>
-                      <td className="px-4 py-2.5">{g.desc}</td>
-                      <td className="px-4 py-2.5 font-mono text-right">{g.ativos}</td>
-                      <td className="px-4 py-2.5 font-mono text-right text-red-brand">{formatCurrency(g.impacto)}</td>
+                      <td className="px-4 py-2.5 text-xs">{g.desc}</td>
+                      <td className="px-4 py-2.5 text-[10px] font-mono text-muted-foreground">{g.regulatory_ref}</td>
+                      <td className="px-4 py-2.5 text-center">
+                        <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded border ${
+                          g.severity === 'critical' ? 'text-red-brand bg-red-brand/10 border-red-brand/20' :
+                          g.severity === 'major' ? 'text-amber-brand bg-amber-brand/10 border-amber-brand/20' :
+                          'text-muted-foreground bg-muted/30 border-border'
+                        }`}>{g.severity.toUpperCase()}</span>
+                      </td>
+                      <td className="px-4 py-2.5 font-mono text-right text-xs">{g.ativos}</td>
+                      <td className="px-4 py-2.5 font-mono text-right text-red-brand text-xs">{formatCurrency(g.impacto)}</td>
+                      <td className="px-4 py-2.5 text-[10px] text-right text-muted-foreground">{g.remediation_estimate}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -333,18 +349,7 @@ const ProjectPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {(inferencesATGI as any[]).map((inf: any) => (
-                <div key={inf.id} className="glass-panel-purple p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-mono text-xs text-purple-brand">{inf.inference_id}</span>
-                  </div>
-                  <h4 className="text-sm font-semibold mb-2">{inf.title}</h4>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{inf.finding}</p>
-                  {inf.gap_type && (
-                    <span className="mt-2 inline-block text-[10px] font-mono px-2 py-0.5 rounded bg-red-brand/10 text-red-brand border border-red-brand/20">
-                      {inf.gap_type}
-                    </span>
-                  )}
-                </div>
+                <InferenceATGICard key={inf.id} inference={inf} />
               ))}
             </div>
           </div>
