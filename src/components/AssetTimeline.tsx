@@ -1,4 +1,4 @@
-import type { TimelineEvent } from '@/types/grafter';
+// Timeline events are typed as `any` to support both DB rows and extended mock fields
 import { formatCurrency } from '@/lib/format';
 
 const layerConfig = {

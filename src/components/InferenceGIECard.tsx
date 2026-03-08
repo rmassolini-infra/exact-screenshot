@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, FlaskConical, Scale, BarChart3, FileCheck, Link2 } from 'lucide-react';
-import type { InferenceGIE } from '@/types/grafter';
+// Using `any` for inference prop to support both DB rows and extended fields
 import { formatCurrency, riskBadgeClass } from '@/lib/format';
 
 const docTypeLabels: Record<string, string> = {
