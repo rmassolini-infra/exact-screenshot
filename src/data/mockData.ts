@@ -51,7 +51,7 @@ export const mockProjects: any[] = [
   },
 ];
 
-export const mockAssets: Asset[] = [
+export const mockAssets: any[] = [
   { id: 'ast-001', project_id: 'proj-001', codigo: 'TR-2018-042', tipo: 'transformador', fabricante: 'ABB', modelo: 'KTRT 500kV', numero_serie: 'ABB-2018-42901', data_aquisicao: '2018-03-15', capex_original: 12500000, capex_corrigido: 16875000, vida_util_contratada_anos: 30, vida_util_restante_anos: 22.3, depreciacao_aneel_pct: 26.7, depreciacao_fisica_pct: 34.2, valor_atual: 11109375, risk_score: 'CRITICAL', timeline_coverage_pct: 58, conformidade_score: 0.62 },
   { id: 'ast-002', project_id: 'proj-001', codigo: 'TR-2018-087', tipo: 'transformador', fabricante: 'Siemens', modelo: 'TLSN 230kV', numero_serie: 'SIE-2018-87443', data_aquisicao: '2018-06-22', capex_original: 8200000, capex_corrigido: 11070000, vida_util_contratada_anos: 30, vida_util_restante_anos: 24.1, depreciacao_aneel_pct: 26.7, depreciacao_fisica_pct: 22.8, valor_atual: 8541900, risk_score: 'LOW', timeline_coverage_pct: 92, conformidade_score: 0.95 },
   { id: 'ast-003', project_id: 'proj-001', codigo: 'DJ-2015-014', tipo: 'disjuntor', fabricante: 'ABB', modelo: 'LTB 362kV', numero_serie: 'ABB-2015-14002', data_aquisicao: '2015-01-10', capex_original: 3400000, capex_corrigido: 5270000, vida_util_contratada_anos: 25, vida_util_restante_anos: 14.0, depreciacao_aneel_pct: 44.0, depreciacao_fisica_pct: 48.5, valor_atual: 2714050, risk_score: 'HIGH', timeline_coverage_pct: 71, conformidade_score: 0.78 },
