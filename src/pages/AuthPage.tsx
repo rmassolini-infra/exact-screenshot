@@ -4,20 +4,51 @@ import { useNavigate } from 'react-router-dom';
 import { Shield, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { signIn, signUp, user } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // If already logged in, redirect
+  if (user) {
+    navigate('/dashboard', { replace: true });
+    return null;
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/dashboard');
+    setIsLoading(true);
+
+    try {
+      if (isLogin) {
+        const { error } = await signIn(email, password);
+        if (error) {
+          toast.error(error.message);
+        } else {
+          navigate('/dashboard');
+        }
+      } else {
+        const { error } = await signUp(email, password);
+        if (error) {
+          toast.error(error.message);
+        } else {
+          toast.success('Conta criada! Verifique seu email para confirmar.');
+        }
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-background dot-grid flex items-center justify-center relative overflow-hidden">
-      {/* Subtle glow blobs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-primary/5 blur-[120px]" />
       <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-accent/5 blur-[100px]" />
 
@@ -27,7 +58,6 @@ const AuthPage = () => {
         transition={{ duration: 0.6 }}
         className="glass-panel-primary p-8 w-full max-w-md relative z-10"
       >
-        {/* Logo */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-3">
             <Shield className="w-8 h-8 text-cyan" />
@@ -42,12 +72,11 @@ const AuthPage = () => {
           <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted/50 border border-border">
             <div className="w-1.5 h-1.5 rounded-full bg-cyan animate-glow-pulse" />
             <span className="text-xs font-mono text-muted-foreground">
-              Plataforma P&D ANEEL · Confidencial
+              P&D ANEEL · CONFIDENCIAL
             </span>
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="flex gap-1 mb-6 p-1 rounded-lg bg-muted/30">
           <button
             onClick={() => setIsLogin(true)}
@@ -63,28 +92,33 @@ const AuthPage = () => {
               !isLogin ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            Registrar
+            Criar Conta
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {!isLogin && (
-            <div>
-              <label className="text-sm text-muted-foreground mb-1.5 block">Nome completo</label>
-              <Input placeholder="João Silva" className="bg-muted/30 border-border" />
-            </div>
-          )}
           <div>
             <label className="text-sm text-muted-foreground mb-1.5 block">Email</label>
-            <Input type="email" placeholder="analista@empresa.com" className="bg-muted/30 border-border" />
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="analista@empresa.com"
+              className="bg-muted/30 border-border"
+              required
+            />
           </div>
           <div>
             <label className="text-sm text-muted-foreground mb-1.5 block">Senha</label>
             <div className="relative">
               <Input
                 type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 className="bg-muted/30 border-border pr-10"
+                required
+                minLength={6}
               />
               <button
                 type="button"
@@ -96,8 +130,8 @@ const AuthPage = () => {
             </div>
           </div>
 
-          <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-            {isLogin ? 'Acessar Plataforma' : 'Criar Conta'}
+          <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
+            {isLoading ? 'Carregando...' : isLogin ? 'Acessar Plataforma' : 'Criar Conta'}
           </Button>
         </form>
 
