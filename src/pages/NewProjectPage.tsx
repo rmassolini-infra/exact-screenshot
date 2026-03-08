@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Upload, FileText, BookOpen, Wrench, ScrollText } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Upload, FileText, BookOpen, Wrench, ScrollText, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -24,7 +24,6 @@ const NewProjectPage = () => {
 
       <h1 className="text-2xl font-bold">Novo Projeto de Due Diligence</h1>
 
-      {/* Steps indicator */}
       <div className="flex items-center gap-3">
         {[1, 2].map((s) => (
           <div key={s} className="flex items-center gap-2">
@@ -84,7 +83,7 @@ const NewProjectPage = () => {
               <ArrowLeft className="w-4 h-4" /> Voltar
             </Button>
             <Button onClick={() => navigate('/projects/proj-001')} className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90">
-              Iniciar Processamento <Zap className="w-4 h-4" />
+              <Zap className="w-4 h-4" /> Iniciar Processamento
             </Button>
           </div>
         </motion.div>
@@ -92,7 +91,5 @@ const NewProjectPage = () => {
     </div>
   );
 };
-
-import { Zap } from 'lucide-react';
 
 export default NewProjectPage;
