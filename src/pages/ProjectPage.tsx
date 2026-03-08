@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Eye, Box, Zap, Clock, MessageSquare, FileDown, Search } from 'lucide-react';
 import { useProject, useProjectAssets, useProjectInferencesGIE, useProjectInferencesATGI, useProjectPassivo, useAssetTimeline } from '@/hooks/useProjectData';
+import { useProjectRealtime } from '@/hooks/useProjectRealtime';
 import { mockProjects, mockAssets, mockInferencesGIE, mockInferencesATGI, mockPassivo, mockPipelineSteps, mockTimelineEvents } from '@/data/mockData';
 import { formatCurrency, formatPercent, riskBadgeClass } from '@/lib/format';
 import PipelineStatus from '@/components/PipelineStatus';
@@ -28,6 +29,9 @@ const ProjectPage = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [assetSearch, setAssetSearch] = useState('');
   const [selectedAsset, setSelectedAsset] = useState<any>(null);
+
+  // Realtime subscription
+  useProjectRealtime(id);
 
   // Supabase data
   const { data: dbProject } = useProject(id ?? '');
