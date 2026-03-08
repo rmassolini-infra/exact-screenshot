@@ -16,6 +16,7 @@ import RagChat from '@/components/RagChat';
 import { Input } from '@/components/ui/input';
 import { exportPdf } from '@/lib/exportPdf';
 import { exportXlsx } from '@/lib/exportXlsx';
+import { exportXml } from '@/lib/exportXml';
 
 const tabs = [
   { id: 'overview', label: 'Visão Geral', icon: Eye },
@@ -92,6 +93,16 @@ const ProjectPage = () => {
       toast.success('XLSX exportado com sucesso!');
     } catch (e) {
       toast.error('Erro ao exportar XLSX');
+      console.error(e);
+    }
+  }, [project, assets, inferencesGIE, passivo, gapSummary]);
+
+  const handleExportXml = useCallback(() => {
+    try {
+      exportXml({ project, assets: assets as any[], inferencesGIE: inferencesGIE as any[], passivo, gapSummary });
+      toast.success('XML SGPED/ANEEL exportado com sucesso!');
+    } catch (e) {
+      toast.error('Erro ao exportar XML');
       console.error(e);
     }
   }, [project, assets, inferencesGIE, passivo, gapSummary]);
@@ -354,7 +365,7 @@ const ProjectPage = () => {
                 <button onClick={handleExportPdf} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
                   📄 Gerar PDF Executivo
                 </button>
-                <button className="px-4 py-2 rounded-lg bg-muted text-muted-foreground text-sm font-medium hover:bg-muted/80 transition-colors border border-border">
+                <button onClick={handleExportXml} className="px-4 py-2 rounded-lg bg-muted text-muted-foreground text-sm font-medium hover:bg-muted/80 transition-colors border border-border">
                   🗂 Exportar XML SGPED/ANEEL
                 </button>
                 <button onClick={handleExportXlsx} className="px-4 py-2 rounded-lg bg-muted text-muted-foreground text-sm font-medium hover:bg-muted/80 transition-colors border border-border">
