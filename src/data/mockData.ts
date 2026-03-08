@@ -1,6 +1,6 @@
 // Mock data — untyped to allow extended fields not in DB schema
 
-export const mockProjects: Project[] = [
+export const mockProjects: any[] = [
   {
     id: 'proj-001',
     name: 'DD Taesa Target Nordeste Q2 2026',
