@@ -76,6 +76,26 @@ const ProjectPage = () => {
 
   const netImpactGIE = (inferencesGIE as any[]).reduce((s: number, inf: any) => s + (inf.impact_value ?? 0), 0);
 
+  const handleExportPdf = useCallback(() => {
+    try {
+      exportPdf({ project, assets: assets as any[], inferencesGIE: inferencesGIE as any[], inferencesATGI: inferencesATGI as any[], passivo, kpis, gapSummary });
+      toast.success('PDF gerado com sucesso!');
+    } catch (e) {
+      toast.error('Erro ao gerar PDF');
+      console.error(e);
+    }
+  }, [project, assets, inferencesGIE, inferencesATGI, passivo, kpis, gapSummary]);
+
+  const handleExportXlsx = useCallback(() => {
+    try {
+      exportXlsx({ projectName: (project as any)?.name ?? 'projeto', assets: assets as any[], inferencesGIE: inferencesGIE as any[], passivo, gapSummary });
+      toast.success('XLSX exportado com sucesso!');
+    } catch (e) {
+      toast.error('Erro ao exportar XLSX');
+      console.error(e);
+    }
+  }, [project, assets, inferencesGIE, passivo, gapSummary]);
+
   if (!project) {
     return (
       <div className="max-w-7xl mx-auto text-center py-12">
