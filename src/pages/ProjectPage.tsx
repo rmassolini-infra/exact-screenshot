@@ -12,6 +12,7 @@ import PassivoCard from '@/components/PassivoCard';
 import InferenceGIECard from '@/components/InferenceGIECard';
 import AssetTimeline from '@/components/AssetTimeline';
 import AssetDetailSheet from '@/components/AssetDetailSheet';
+import OverviewCharts from '@/components/OverviewCharts';
 import RagChat from '@/components/RagChat';
 import { Input } from '@/components/ui/input';
 import { exportPdf } from '@/lib/exportPdf';
