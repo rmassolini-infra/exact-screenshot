@@ -173,6 +173,8 @@ const ProjectPage = () => {
               </div>
             </div>
 
+            <OverviewCharts assets={assets as any[]} inferencesGIE={inferencesGIE as any[]} kpis={kpis} />
+
             {passivo && <PassivoCard passivo={passivo as any} />}
           </div>
         )}
