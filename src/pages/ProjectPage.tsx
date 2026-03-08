@@ -14,6 +14,8 @@ import AssetTimeline from '@/components/AssetTimeline';
 import AssetDetailSheet from '@/components/AssetDetailSheet';
 import RagChat from '@/components/RagChat';
 import { Input } from '@/components/ui/input';
+import { exportPdf } from '@/lib/exportPdf';
+import { exportXlsx } from '@/lib/exportXlsx';
 
 const tabs = [
   { id: 'overview', label: 'Visão Geral', icon: Eye },
