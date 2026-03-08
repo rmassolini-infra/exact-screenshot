@@ -399,7 +399,7 @@ export const mockPipelineSteps: any[] = [
   { id: 'M-05', label: 'Pipeline ATGI', status: 'done', duration: '2m 54s' },
 ];
 
-export const mockRagMessages: RagMessage[] = [
+export const mockRagMessages: any[] = [
   { id: 'msg-1', role: 'user', content: 'Qual o histórico de falhas críticas dos transformadores listados nas NFs de 2018?' },
   { id: 'msg-2', role: 'assistant', content: 'Identifiquei 3 transformadores adquiridos em 2018 com histórico de falhas:\n\n1. **TR-2018-042** (ABB, 500kV) — 2 falhas críticas (2021, 2023). Última: desligamento de emergência em Jun/2023, sem laudo de resolução.\n\n2. **TR-2018-087** (Siemens, 230kV) — 1 falha menor (2020), resolvida.\n\n3. **TR-2018-091** (WEG, 138kV) — sem falhas registradas, manutenção em dia.', sources: [{ doc_name: 'NF-2018-0042', page: 3 }, { doc_name: 'Laudo-Inspecao-2023-06.pdf', page: 7 }, { doc_name: 'OS-2020-114.pdf', page: 2 }], confidence: 0.96, needs_human_review: false },
 ];
