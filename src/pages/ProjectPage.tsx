@@ -70,7 +70,6 @@ const ProjectPage = () => {
   ];
 
   const gapSummary = mockGapSummary;
-  ];
 
   const netImpactGIE = (inferencesGIE as any[]).reduce((s: number, inf: any) => s + (inf.impact_value ?? 0), 0);
 
