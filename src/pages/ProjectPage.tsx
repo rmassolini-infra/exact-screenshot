@@ -177,75 +177,14 @@ const ProjectPage = () => {
         )}
 
         {activeTab === 'assets' && (
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input value={assetSearch} onChange={(e) => setAssetSearch(e.target.value)}
-                  placeholder="Buscar por código, fabricante, modelo..." className="pl-9 bg-muted/30 border-border" />
-              </div>
-              <span className="text-sm text-muted-foreground font-mono">{filteredAssets.length} ativos</span>
-            </div>
-
-            <div className="glass-panel overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border text-left">
-                      {['Código', 'Tipo', 'Fabricante', 'Modelo', 'CAPEX Orig.', 'CAPEX Corrig.', 'Valor Atual', 'Depr. ANEEL', 'Depr. Física', 'Risco', 'Timeline'].map(h => (
-                        <th key={h} className="px-3 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium whitespace-nowrap">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredAssets.map((a: any) => (
-                      <tr key={a.id} className="border-b border-border/50 hover:bg-muted/10 cursor-pointer transition-colors"
-                        onClick={() => setSelectedAsset(a)}>
-                        <td className="px-3 py-2.5 font-mono text-cyan text-xs">{a.codigo}</td>
-                        <td className="px-3 py-2.5 text-xs capitalize">{a.tipo}</td>
-                        <td className="px-3 py-2.5 text-xs">{a.fabricante}</td>
-                        <td className="px-3 py-2.5 text-xs text-muted-foreground">{a.modelo}</td>
-                        <td className="px-3 py-2.5 font-mono text-xs text-right">{formatCurrency(a.capex_original ?? 0)}</td>
-                        <td className="px-3 py-2.5 font-mono text-xs text-right">{formatCurrency(a.capex_corrigido_ipca ?? a.capex_corrigido ?? 0)}</td>
-                        <td className="px-3 py-2.5 font-mono text-xs text-right font-medium">{formatCurrency(a.valor_atual ?? 0)}</td>
-                        <td className="px-3 py-2.5">
-                          <div className="flex items-center gap-1.5">
-                            <div className="w-12 h-1.5 rounded-full bg-muted/30">
-                              <div className="h-full rounded-full bg-amber-brand" style={{ width: `${a.depreciacao_aneel_pct ?? 0}%` }} />
-                            </div>
-                            <span className="text-[10px] font-mono">{formatPercent(a.depreciacao_aneel_pct ?? 0)}</span>
-                          </div>
-                        </td>
-                        <td className="px-3 py-2.5">
-                          <div className="flex items-center gap-1.5">
-                            <div className="w-12 h-1.5 rounded-full bg-muted/30">
-                              <div className={`h-full rounded-full ${(a.depreciacao_fisica_pct ?? 0) > (a.depreciacao_aneel_pct ?? 0) ? 'bg-red-brand' : 'bg-green-brand'}`}
-                                style={{ width: `${a.depreciacao_fisica_pct ?? 0}%` }} />
-                            </div>
-                            <span className="text-[10px] font-mono">{formatPercent(a.depreciacao_fisica_pct ?? 0)}</span>
-                          </div>
-                        </td>
-                        <td className="px-3 py-2.5"><span className={riskBadgeClass(a.risk_score ?? 'LOW')}>{a.risk_score ?? 'LOW'}</span></td>
-                        <td className="px-3 py-2.5">
-                          <span className={`text-xs font-mono ${(a.timeline_coverage_pct ?? 0) >= 80 ? 'text-green-brand' : (a.timeline_coverage_pct ?? 0) >= 60 ? 'text-amber-brand' : 'text-red-brand'}`}>
-                            {formatPercent(a.timeline_coverage_pct ?? 0)}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <AssetDetailSheet
-              asset={selectedAsset}
-              open={!!selectedAsset}
-              onClose={() => setSelectedAsset(null)}
-              timelineEvents={timelineEvents as any}
-              inferences={[...(inferencesGIE as any[]).filter((i: any) => i.asset_id === selectedAsset?.id), ...(inferencesATGI as any[]).filter((i: any) => i.asset_id === selectedAsset?.id)]}
-            />
-          </div>
+          <AssetInventoryTab
+            assets={assets as any[]}
+            timelineEvents={timelineEvents as any[]}
+            inferencesGIE={inferencesGIE as any[]}
+            inferencesATGI={inferencesATGI as any[]}
+            selectedAsset={selectedAsset}
+            onSelectAsset={setSelectedAsset}
+          />
         )}
 
         {activeTab === 'gie' && (
