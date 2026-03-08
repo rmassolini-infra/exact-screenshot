@@ -1,4 +1,4 @@
-import type { TimelineEvent } from '@/types/grafter';
+// Timeline events are typed as `any` to support both DB rows and extended mock fields
 import { formatCurrency } from '@/lib/format';
 
 const layerConfig = {
@@ -14,7 +14,7 @@ const severityColors: Record<string, string> = {
   minor: 'ring-1 ring-muted-foreground',
 };
 
-const AssetTimeline = ({ events }: { events: TimelineEvent[] }) => {
+const AssetTimeline = ({ events }: { events: any[] }) => {
   if (!events.length) return <p className="text-muted-foreground text-sm">Nenhum evento registrado.</p>;
 
   const sorted = [...events].sort((a, b) => new Date(a.event_date).getTime() - new Date(b.event_date).getTime());

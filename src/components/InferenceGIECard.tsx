@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, FlaskConical, Scale, BarChart3, FileCheck, Link2 } from 'lucide-react';
-import type { InferenceGIE } from '@/types/grafter';
+// Using `any` for inference prop to support both DB rows and extended fields
 import { formatCurrency, riskBadgeClass } from '@/lib/format';
 
 const docTypeLabels: Record<string, string> = {
@@ -20,7 +20,7 @@ const validationLabels: Record<string, { label: string; class: string }> = {
   requires_field_inspection: { label: 'Inspeção requerida', class: 'text-red-brand bg-red-brand/10 border-red-brand/20' },
 };
 
-const InferenceGIECard = ({ inference }: { inference: InferenceGIE }) => {
+const InferenceGIECard = ({ inference }: { inference: any }) => {
   const [expanded, setExpanded] = useState(false);
 
   const panelClass = inference.level === 'CRITICAL' ? 'glass-panel-red' :

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, FlaskConical, Scale, Calendar, Link2, DollarSign } from 'lucide-react';
-import type { InferenceATGI } from '@/types/grafter';
+// Using `any` for inference prop to support both DB rows and extended fields
 import { formatCurrency } from '@/lib/format';
 
 const severityConfig: Record<string, { label: string; class: string }> = {
@@ -11,7 +11,7 @@ const severityConfig: Record<string, { label: string; class: string }> = {
   observation: { label: 'OBS', class: 'text-muted-foreground bg-muted/20 border-border' },
 };
 
-const InferenceATGICard = ({ inference }: { inference: InferenceATGI }) => {
+const InferenceATGICard = ({ inference }: { inference: any }) => {
   const [expanded, setExpanded] = useState(false);
   const severity = inference.severity ? severityConfig[inference.severity] : null;
 
