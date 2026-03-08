@@ -3,47 +3,74 @@ import { Send, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { RagMessage } from '@/types/grafter';
-import { mockRagMessages } from '@/data/mockData';
+import { supabase } from '@/integrations/supabase/client';
+import { useProjectRagMessages } from '@/hooks/useProjectData';
+import { useQueryClient } from '@tanstack/react-query';
 
 const suggestedQueries = [
   'Qual o valor de reposição dos ativos pré-2015?',
   'Quais ativos estão com manutenção em atraso?',
   'Fabricantes com mais de 40% de concentração?',
   'Histórico de penalidades ANEEL do parque?',
+  'Quais NFs têm inconsistência com os laudos?',
 ];
 
-const RagChat = () => {
-  const [messages, setMessages] = useState<RagMessage[]>(mockRagMessages);
+const RagChat = ({ projectId }: { projectId: string }) => {
+  const { data: dbMessages } = useProjectRagMessages(projectId);
+  const queryClient = useQueryClient();
   const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  const messages: RagMessage[] = (dbMessages ?? []).map(m => ({
+    id: m.id,
+    role: m.role as 'user' | 'assistant',
+    content: m.content,
+    sources: m.sources as any,
+    confidence: m.confidence ?? undefined,
+    needs_human_review: m.needs_human_review ?? undefined,
+  }));
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages.length]);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-    const userMsg: RagMessage = { id: `msg-${Date.now()}`, role: 'user', content: input };
-    setMessages(prev => [...prev, userMsg]);
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
+    const question = input;
     setInput('');
+    setIsLoading(true);
 
-    // Simulated response
-    setTimeout(() => {
-      const assistantMsg: RagMessage = {
-        id: `msg-${Date.now() + 1}`,
+    try {
+      // Save user message
+      await supabase.from('rag_messages').insert({
+        project_id: projectId,
+        role: 'user',
+        content: question,
+      });
+
+      // Simulated assistant response (will be replaced by Edge Function)
+      const assistantContent = `Analisando o acervo documental para responder: "${question}"\n\nEsta é uma resposta simulada. Em produção, a resposta será gerada pelo motor RAG com base nos documentos indexados do projeto.`;
+
+      await supabase.from('rag_messages').insert({
+        project_id: projectId,
         role: 'assistant',
-        content: 'Analisando o acervo documental... Esta é uma resposta simulada para demonstração da interface do RAG Chat. Em produção, a resposta seria gerada pelo Claude com base nos documentos indexados do projeto.',
-        sources: [{ doc_name: 'Documento-Exemplo', page: 1 }],
-        confidence: 0.89,
+        content: assistantContent,
+        confidence: 0.85,
         needs_human_review: false,
-      };
-      setMessages(prev => [...prev, assistantMsg]);
-    }, 1500);
+        sources: [{ doc_name: 'Exemplo', page: 1 }],
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['rag_messages', projectId] });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="glass-panel flex flex-col h-[600px]">
-      {/* Header */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center gap-2">
           <Brain className="w-5 h-5 text-cyan" />
@@ -52,14 +79,14 @@ const RagChat = () => {
         <p className="text-xs text-muted-foreground mt-1">Consulte o acervo documental em linguagem natural · Fontes citadas em cada resposta</p>
       </div>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.length === 0 && (
+          <p className="text-sm text-muted-foreground text-center py-8">Faça uma pergunta sobre os documentos do projeto.</p>
+        )}
         {messages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-[80%] rounded-lg p-3 text-sm ${
-              msg.role === 'user'
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted/30 border border-border'
+              msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted/30 border border-border'
             }`}>
               {msg.role === 'assistant' && (
                 <div className="flex items-center gap-1.5 mb-2">
@@ -68,10 +95,10 @@ const RagChat = () => {
                 </div>
               )}
               <div className="whitespace-pre-wrap leading-relaxed">{msg.content}</div>
-              {msg.sources && msg.sources.length > 0 && (
+              {msg.sources && (msg.sources as any[]).length > 0 && (
                 <div className="mt-3 pt-2 border-t border-border/50">
                   <p className="text-[10px] text-muted-foreground mb-1">📎 Fontes citadas:</p>
-                  {msg.sources.map((s, i) => (
+                  {(msg.sources as any[]).map((s: any, i: number) => (
                     <span key={i} className="text-[10px] font-mono text-muted-foreground block">
                       · {s.doc_name}, pág. {s.page}
                     </span>
@@ -96,10 +123,19 @@ const RagChat = () => {
             </div>
           </div>
         ))}
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="bg-muted/30 border border-border rounded-lg p-3 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-cyan border-t-transparent rounded-full animate-spin" />
+                <span className="text-xs text-muted-foreground">Analisando documentos...</span>
+              </div>
+            </div>
+          </div>
+        )}
         <div ref={bottomRef} />
       </div>
 
-      {/* Suggested queries */}
       <div className="px-4 pb-2 flex flex-wrap gap-1.5">
         {suggestedQueries.map((q) => (
           <button
@@ -112,7 +148,6 @@ const RagChat = () => {
         ))}
       </div>
 
-      {/* Input */}
       <div className="p-4 border-t border-border flex gap-2">
         <Input
           value={input}
@@ -120,8 +155,9 @@ const RagChat = () => {
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           placeholder="Pergunte sobre os documentos do projeto..."
           className="bg-muted/30 border-border"
+          disabled={isLoading}
         />
-        <Button onClick={handleSend} size="icon" className="shrink-0">
+        <Button onClick={handleSend} size="icon" className="shrink-0" disabled={isLoading}>
           <Send className="w-4 h-4" />
         </Button>
       </div>
