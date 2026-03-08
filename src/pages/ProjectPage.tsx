@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Eye, Box, Zap, Clock, MessageSquare, FileDown, Search } from 'lucide-react';
 import { useProject, useProjectAssets, useProjectInferencesGIE, useProjectInferencesATGI, useProjectPassivo, useAssetTimeline } from '@/hooks/useProjectData';
 import { useProjectRealtime } from '@/hooks/useProjectRealtime';
-import { mockProjects, mockAssets, mockInferencesGIE, mockInferencesATGI, mockPassivo, mockPipelineSteps, mockTimelineEvents } from '@/data/mockData';
+import { mockProjects, mockAssets, mockInferencesGIE, mockInferencesATGI, mockPassivo, mockPipelineSteps, mockTimelineEvents, mockGapSummary } from '@/data/mockData';
 import { formatCurrency, formatPercent, riskBadgeClass } from '@/lib/format';
 import PipelineStatus from '@/components/PipelineStatus';
 import PassivoCard from '@/components/PassivoCard';
