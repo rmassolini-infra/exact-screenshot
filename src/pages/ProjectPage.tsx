@@ -365,7 +365,7 @@ const ProjectPage = () => {
                 <button onClick={handleExportPdf} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
                   📄 Gerar PDF Executivo
                 </button>
-                <button className="px-4 py-2 rounded-lg bg-muted text-muted-foreground text-sm font-medium hover:bg-muted/80 transition-colors border border-border">
+                <button onClick={handleExportXml} className="px-4 py-2 rounded-lg bg-muted text-muted-foreground text-sm font-medium hover:bg-muted/80 transition-colors border border-border">
                   🗂 Exportar XML SGPED/ANEEL
                 </button>
                 <button onClick={handleExportXlsx} className="px-4 py-2 rounded-lg bg-muted text-muted-foreground text-sm font-medium hover:bg-muted/80 transition-colors border border-border">
