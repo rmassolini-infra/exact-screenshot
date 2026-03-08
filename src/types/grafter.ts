@@ -32,6 +32,20 @@ export interface Asset {
   conformidade_score: number;
 }
 
+export interface SourceDocument {
+  doc_name: string;
+  page: number;
+  excerpt: string;
+  doc_type?: 'nota_fiscal' | 'laudo_tecnico' | 'edital' | 'relatorio_aneel' | 'ordem_servico' | 'manual' | 'contrato';
+  confidence?: number;
+}
+
+export interface SensitivityRange {
+  scenario: 'otimista' | 'base' | 'pessimista';
+  value: number;
+  probability: number;
+}
+
 export interface InferenceGIE {
   id: string;
   project_id: string;
@@ -42,8 +56,16 @@ export interface InferenceGIE {
   impact_value: number;
   finding: string;
   recommendation: string;
-  source_documents: { doc_name: string; page: number; excerpt: string }[];
+  source_documents: SourceDocument[];
   confidence_score: number;
+  // New technical fields
+  methodology?: string;
+  regulatory_basis?: string;
+  affected_assets?: number;
+  sensitivity?: SensitivityRange[];
+  calculation_memo?: string;
+  cross_references?: string[];
+  validation_status?: 'validated' | 'pending_review' | 'requires_field_inspection';
 }
 
 export interface InferenceATGI {
@@ -55,6 +77,15 @@ export interface InferenceATGI {
   gap_type: string | null;
   value: number;
   finding: string;
+  // New technical fields
+  methodology?: string;
+  regulatory_basis?: string;
+  severity?: 'critical' | 'major' | 'minor' | 'observation';
+  remediation_cost?: number;
+  remediation_timeline?: string;
+  affected_period?: { start: string; end: string };
+  source_documents?: SourceDocument[];
+  cross_references?: string[];
 }
 
 export interface TimelineEvent {
@@ -66,6 +97,10 @@ export interface TimelineEvent {
   description: string;
   has_resolution: boolean;
   gap_type: string | null;
+  // New fields
+  impact_value?: number;
+  source_doc?: string;
+  severity?: 'critical' | 'major' | 'minor';
 }
 
 export interface PassivoAjustado {
@@ -95,4 +130,14 @@ export interface PipelineStep {
   label: string;
   status: 'done' | 'processing' | 'pending';
   duration?: string;
+}
+
+export interface GapSummary {
+  tipo: string;
+  desc: string;
+  ativos: number;
+  impacto: number;
+  regulatory_ref: string;
+  severity: 'critical' | 'major' | 'minor';
+  remediation_estimate: string;
 }
