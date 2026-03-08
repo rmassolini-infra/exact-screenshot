@@ -12,6 +12,7 @@ import PassivoCard from '@/components/PassivoCard';
 import InferenceGIECard from '@/components/InferenceGIECard';
 import AssetTimeline from '@/components/AssetTimeline';
 import AssetDetailSheet from '@/components/AssetDetailSheet';
+import AssetInventoryTab from '@/components/AssetInventoryTab';
 import InferenceATGICard from '@/components/InferenceATGICard';
 import OverviewCharts from '@/components/OverviewCharts';
 import RagChat from '@/components/RagChat';
