@@ -69,11 +69,7 @@ const ProjectPage = () => {
     { label: 'Cobertura Timeline', value: (project as any)?.kpi_atgi_coverage ?? 82, target: 80, met: true },
   ];
 
-  const gapSummary = [
-    { tipo: 'TIPO 1', desc: 'Desvio de especificação', ativos: 4, impacto: -42000000 },
-    { tipo: 'TIPO 2', desc: 'Manutenção não executada', ativos: 12, impacto: -18000000 },
-    { tipo: 'TIPO 3', desc: 'Eventos sem resolução', ativos: 3, impacto: -8500000 },
-    { tipo: 'TIPO 4', desc: 'Divergência contábil-real', ativos: 8, impacto: -19000000 },
+  const gapSummary = mockGapSummary;
   ];
 
   const netImpactGIE = (inferencesGIE as any[]).reduce((s: number, inf: any) => s + (inf.impact_value ?? 0), 0);
