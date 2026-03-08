@@ -60,7 +60,7 @@ export const mockAssets: any[] = [
   { id: 'ast-006', project_id: 'proj-001', codigo: 'CB-2017-055', tipo: 'cabo', fabricante: 'Nexans', modelo: 'ACSR 795 MCM', numero_serie: 'NEX-2017-05500', data_aquisicao: '2017-11-30', capex_original: 2100000, capex_corrigido: 2940000, vida_util_contratada_anos: 35, vida_util_restante_anos: 26.2, depreciacao_aneel_pct: 25.7, depreciacao_fisica_pct: 18.4, valor_atual: 2398860, risk_score: 'LOW', timeline_coverage_pct: 88, conformidade_score: 0.91 },
 ];
 
-export const mockInferencesGIE: InferenceGIE[] = [
+export const mockInferencesGIE: any[] = [
   {
     id: 'gie-1', project_id: 'proj-001', asset_id: null, inference_id: 'INF-M1',
     title: 'Score de Risco Global — Concentração CRITICAL',
