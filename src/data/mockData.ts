@@ -352,7 +352,7 @@ export const mockInferencesATGI: any[] = [
   },
 ];
 
-export const mockTimelineEvents: TimelineEvent[] = [
+export const mockTimelineEvents: any[] = [
   { id: 'te-1', asset_id: 'ast-001', layer: 'edital', event_date: '2017-06-01', event_type: 'especificacao', description: 'Edital de Concessão Nº 042/2015 — Especificação contratada: Transformador 500kV ABB KTRT Classe 1 (NBR 5356)', has_resolution: true, gap_type: null, source_doc: 'Edital-Concessão-2015-042' },
   { id: 'te-2', asset_id: 'ast-001', layer: 'as_built', event_date: '2018-03-15', event_type: 'instalacao_componente', description: 'Comissionamento: ABB KTRT 500kV instalado — Classe 2 detectada (⚠ desvio de especificação Art. 32 REN 674)', has_resolution: false, gap_type: 'TIPO_1', severity: 'major', impact_value: 2400000, source_doc: 'As-Built-TR042-2018' },
   { id: 'te-3', asset_id: 'ast-001', layer: 'manutencao', event_date: '2019-01-20', event_type: 'inspecao', description: 'Inspeção preventiva semestral — sem anomalias. Análise de óleo: DGA normal. Termografia: OK.', has_resolution: true, gap_type: null, source_doc: 'OS-2019-012' },
