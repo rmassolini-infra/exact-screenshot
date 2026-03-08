@@ -143,26 +143,40 @@
   .bg-dim { background-color: hsl(var(--dim)); }
 
   .badge-low {
-    @apply bg-green-brand/20 text-green-brand text-xs font-mono px-2 py-0.5 rounded;
+    @apply text-xs font-mono px-2 py-0.5 rounded;
+    background: hsl(var(--green) / 0.2);
+    color: hsl(var(--green));
   }
   .badge-medium {
-    @apply bg-amber-brand/20 text-amber-brand text-xs font-mono px-2 py-0.5 rounded;
+    @apply text-xs font-mono px-2 py-0.5 rounded;
+    background: hsl(var(--amber) / 0.2);
+    color: hsl(var(--amber));
   }
   .badge-high {
-    @apply bg-red-brand/20 text-red-brand text-xs font-mono px-2 py-0.5 rounded;
+    @apply text-xs font-mono px-2 py-0.5 rounded;
+    background: hsl(var(--red) / 0.2);
+    color: hsl(var(--red));
   }
   .badge-critical {
-    @apply bg-red-brand/20 text-red-brand text-xs font-mono px-2 py-0.5 rounded animate-pulse;
+    @apply text-xs font-mono px-2 py-0.5 rounded animate-pulse;
+    background: hsl(var(--red) / 0.2);
+    color: hsl(var(--red));
   }
 
   .status-ingesting {
-    @apply bg-cyan/20 text-cyan text-xs font-mono px-2 py-0.5 rounded animate-pulse;
+    @apply text-xs font-mono px-2 py-0.5 rounded animate-pulse;
+    background: hsl(var(--cyan) / 0.2);
+    color: hsl(var(--cyan));
   }
   .status-processing {
-    @apply bg-amber-brand/20 text-amber-brand text-xs font-mono px-2 py-0.5 rounded animate-pulse;
+    @apply text-xs font-mono px-2 py-0.5 rounded animate-pulse;
+    background: hsl(var(--amber) / 0.2);
+    color: hsl(var(--amber));
   }
   .status-ready {
-    @apply bg-green-brand/20 text-green-brand text-xs font-mono px-2 py-0.5 rounded;
+    @apply text-xs font-mono px-2 py-0.5 rounded;
+    background: hsl(var(--green) / 0.2);
+    color: hsl(var(--green));
   }
   .status-complete {
     @apply bg-muted text-muted-foreground text-xs font-mono px-2 py-0.5 rounded;
