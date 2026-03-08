@@ -30,6 +30,9 @@ const ProjectPage = () => {
   const [assetSearch, setAssetSearch] = useState('');
   const [selectedAsset, setSelectedAsset] = useState<any>(null);
 
+  // Realtime subscription
+  useProjectRealtime(id);
+
   // Supabase data
   const { data: dbProject } = useProject(id ?? '');
   const { data: dbAssets } = useProjectAssets(id ?? '');
