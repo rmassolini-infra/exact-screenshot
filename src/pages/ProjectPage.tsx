@@ -17,10 +17,8 @@ import InferenceATGICard from '@/components/InferenceATGICard';
 import OverviewCharts from '@/components/OverviewCharts';
 import OverviewTab from '@/components/OverviewTab';
 import RagChat from '@/components/RagChat';
+import ReportTab from '@/components/ReportTab';
 import { Input } from '@/components/ui/input';
-import { exportPdf } from '@/lib/exportPdf';
-import { exportXlsx } from '@/lib/exportXlsx';
-import { exportXml } from '@/lib/exportXml';
 
 const tabs = [
   { id: 'overview', label: 'Visão Geral', icon: Eye },
