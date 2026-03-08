@@ -351,13 +351,13 @@ const ProjectPage = () => {
                 Gere o relatório completo com inventário, valoração, inferências GIE/ATGI e Passivo Total Ajustado.
               </p>
               <div className="flex justify-center gap-3 flex-wrap">
-                <button className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
+                <button onClick={handleExportPdf} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
                   📄 Gerar PDF Executivo
                 </button>
                 <button className="px-4 py-2 rounded-lg bg-muted text-muted-foreground text-sm font-medium hover:bg-muted/80 transition-colors border border-border">
                   🗂 Exportar XML SGPED/ANEEL
                 </button>
-                <button className="px-4 py-2 rounded-lg bg-muted text-muted-foreground text-sm font-medium hover:bg-muted/80 transition-colors border border-border">
+                <button onClick={handleExportXlsx} className="px-4 py-2 rounded-lg bg-muted text-muted-foreground text-sm font-medium hover:bg-muted/80 transition-colors border border-border">
                   📊 Exportar XLSX Inventário
                 </button>
               </div>
