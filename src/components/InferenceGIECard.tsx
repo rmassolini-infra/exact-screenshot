@@ -20,7 +20,7 @@ const validationLabels: Record<string, { label: string; class: string }> = {
   requires_field_inspection: { label: 'Inspeção requerida', class: 'text-red-brand bg-red-brand/10 border-red-brand/20' },
 };
 
-const InferenceGIECard = ({ inference }: { inference: InferenceGIE }) => {
+const InferenceGIECard = ({ inference }: { inference: any }) => {
   const [expanded, setExpanded] = useState(false);
 
   const panelClass = inference.level === 'CRITICAL' ? 'glass-panel-red' :

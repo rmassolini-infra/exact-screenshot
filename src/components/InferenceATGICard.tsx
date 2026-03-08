@@ -11,7 +11,7 @@ const severityConfig: Record<string, { label: string; class: string }> = {
   observation: { label: 'OBS', class: 'text-muted-foreground bg-muted/20 border-border' },
 };
 
-const InferenceATGICard = ({ inference }: { inference: InferenceATGI }) => {
+const InferenceATGICard = ({ inference }: { inference: any }) => {
   const [expanded, setExpanded] = useState(false);
   const severity = inference.severity ? severityConfig[inference.severity] : null;
 

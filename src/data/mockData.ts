@@ -1,4 +1,4 @@
-import type { Project, Asset, InferenceGIE, InferenceATGI, TimelineEvent, PassivoAjustado, PipelineStep, RagMessage, GapSummary } from '@/types/grafter';
+// Mock data — untyped to allow extended fields not in DB schema
 
 export const mockProjects: Project[] = [
   {
