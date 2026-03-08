@@ -14,7 +14,449 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      asset_timeline_events: {
+        Row: {
+          asset_id: string
+          created_at: string | null
+          description: string | null
+          event_date: string | null
+          event_type: string | null
+          gap_type: string | null
+          has_resolution: boolean | null
+          id: string
+          impact_value: number | null
+          layer: string
+          source_doc_id: string | null
+        }
+        Insert: {
+          asset_id: string
+          created_at?: string | null
+          description?: string | null
+          event_date?: string | null
+          event_type?: string | null
+          gap_type?: string | null
+          has_resolution?: boolean | null
+          id?: string
+          impact_value?: number | null
+          layer: string
+          source_doc_id?: string | null
+        }
+        Update: {
+          asset_id?: string
+          created_at?: string | null
+          description?: string | null
+          event_date?: string | null
+          event_type?: string | null
+          gap_type?: string | null
+          has_resolution?: boolean | null
+          id?: string
+          impact_value?: number | null
+          layer?: string
+          source_doc_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_timeline_events_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_timeline_events_source_doc_id_fkey"
+            columns: ["source_doc_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assets: {
+        Row: {
+          capex_corrigido_ipca: number | null
+          capex_original: number | null
+          codigo: string | null
+          conformidade_score: number | null
+          created_at: string | null
+          data_aquisicao: string | null
+          depreciacao_aneel_pct: number | null
+          depreciacao_fisica_pct: number | null
+          fabricante: string | null
+          id: string
+          modelo: string | null
+          numero_serie: string | null
+          project_id: string
+          risk_score: string | null
+          source_documents: Json | null
+          timeline_coverage_pct: number | null
+          tipo: string | null
+          valor_atual: number | null
+          vida_util_contratada_anos: number | null
+          vida_util_restante_anos: number | null
+        }
+        Insert: {
+          capex_corrigido_ipca?: number | null
+          capex_original?: number | null
+          codigo?: string | null
+          conformidade_score?: number | null
+          created_at?: string | null
+          data_aquisicao?: string | null
+          depreciacao_aneel_pct?: number | null
+          depreciacao_fisica_pct?: number | null
+          fabricante?: string | null
+          id?: string
+          modelo?: string | null
+          numero_serie?: string | null
+          project_id: string
+          risk_score?: string | null
+          source_documents?: Json | null
+          timeline_coverage_pct?: number | null
+          tipo?: string | null
+          valor_atual?: number | null
+          vida_util_contratada_anos?: number | null
+          vida_util_restante_anos?: number | null
+        }
+        Update: {
+          capex_corrigido_ipca?: number | null
+          capex_original?: number | null
+          codigo?: string | null
+          conformidade_score?: number | null
+          created_at?: string | null
+          data_aquisicao?: string | null
+          depreciacao_aneel_pct?: number | null
+          depreciacao_fisica_pct?: number | null
+          fabricante?: string | null
+          id?: string
+          modelo?: string | null
+          numero_serie?: string | null
+          project_id?: string
+          risk_score?: string | null
+          source_documents?: Json | null
+          timeline_coverage_pct?: number | null
+          tipo?: string | null
+          valor_atual?: number | null
+          vida_util_contratada_anos?: number | null
+          vida_util_restante_anos?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documents: {
+        Row: {
+          created_at: string | null
+          error_msg: string | null
+          file_path: string | null
+          filename: string
+          id: string
+          ocr_result: Json | null
+          page_count: number | null
+          project_id: string
+          quality_score: number | null
+          status: string | null
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          error_msg?: string | null
+          file_path?: string | null
+          filename: string
+          id?: string
+          ocr_result?: Json | null
+          page_count?: number | null
+          project_id: string
+          quality_score?: number | null
+          status?: string | null
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          error_msg?: string | null
+          file_path?: string | null
+          filename?: string
+          id?: string
+          ocr_result?: Json | null
+          page_count?: number | null
+          project_id?: string
+          quality_score?: number | null
+          status?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inferences_atgi: {
+        Row: {
+          asset_id: string | null
+          created_at: string | null
+          finding: string | null
+          gap_type: string | null
+          id: string
+          inference_id: string
+          project_id: string
+          source_documents: Json | null
+          title: string
+          value: number | null
+        }
+        Insert: {
+          asset_id?: string | null
+          created_at?: string | null
+          finding?: string | null
+          gap_type?: string | null
+          id?: string
+          inference_id: string
+          project_id: string
+          source_documents?: Json | null
+          title: string
+          value?: number | null
+        }
+        Update: {
+          asset_id?: string | null
+          created_at?: string | null
+          finding?: string | null
+          gap_type?: string | null
+          id?: string
+          inference_id?: string
+          project_id?: string
+          source_documents?: Json | null
+          title?: string
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inferences_atgi_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inferences_atgi_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inferences_gie: {
+        Row: {
+          asset_id: string | null
+          confidence_score: number | null
+          created_at: string | null
+          finding: string | null
+          id: string
+          impact_value: number | null
+          inference_id: string
+          level: string
+          project_id: string
+          recommendation: string | null
+          source_documents: Json | null
+          title: string
+        }
+        Insert: {
+          asset_id?: string | null
+          confidence_score?: number | null
+          created_at?: string | null
+          finding?: string | null
+          id?: string
+          impact_value?: number | null
+          inference_id: string
+          level: string
+          project_id: string
+          recommendation?: string | null
+          source_documents?: Json | null
+          title: string
+        }
+        Update: {
+          asset_id?: string | null
+          confidence_score?: number | null
+          created_at?: string | null
+          finding?: string | null
+          id?: string
+          impact_value?: number | null
+          inference_id?: string
+          level?: string
+          project_id?: string
+          recommendation?: string | null
+          source_documents?: Json | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inferences_gie_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inferences_gie_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      passivo_ajustado: {
+        Row: {
+          ajuste_tipo1: number | null
+          ajuste_tipo2: number | null
+          ajuste_tipo3: number | null
+          ajuste_tipo4: number | null
+          calculated_at: string | null
+          delta_absoluto: number | null
+          delta_pct: number | null
+          id: string
+          passivo_oculto_gie: number | null
+          passivo_regulatorio: number | null
+          passivo_total_ajustado: number | null
+          project_id: string
+          seller_price: number | null
+        }
+        Insert: {
+          ajuste_tipo1?: number | null
+          ajuste_tipo2?: number | null
+          ajuste_tipo3?: number | null
+          ajuste_tipo4?: number | null
+          calculated_at?: string | null
+          delta_absoluto?: number | null
+          delta_pct?: number | null
+          id?: string
+          passivo_oculto_gie?: number | null
+          passivo_regulatorio?: number | null
+          passivo_total_ajustado?: number | null
+          project_id: string
+          seller_price?: number | null
+        }
+        Update: {
+          ajuste_tipo1?: number | null
+          ajuste_tipo2?: number | null
+          ajuste_tipo3?: number | null
+          ajuste_tipo4?: number | null
+          calculated_at?: string | null
+          delta_absoluto?: number | null
+          delta_pct?: number | null
+          id?: string
+          passivo_oculto_gie?: number | null
+          passivo_regulatorio?: number | null
+          passivo_total_ajustado?: number | null
+          project_id?: string
+          seller_price?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "passivo_ajustado_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          created_at: string | null
+          id: string
+          kpi_atgi_coverage: number | null
+          kpi_dd_reduction: number | null
+          kpi_gie_accuracy: number | null
+          kpi_ocr_precision: number | null
+          name: string
+          passivo_total_ajustado: number | null
+          seller_price: number | null
+          status: string | null
+          target_company: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          kpi_atgi_coverage?: number | null
+          kpi_dd_reduction?: number | null
+          kpi_gie_accuracy?: number | null
+          kpi_ocr_precision?: number | null
+          name: string
+          passivo_total_ajustado?: number | null
+          seller_price?: number | null
+          status?: string | null
+          target_company: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          kpi_atgi_coverage?: number | null
+          kpi_dd_reduction?: number | null
+          kpi_gie_accuracy?: number | null
+          kpi_ocr_precision?: number | null
+          name?: string
+          passivo_total_ajustado?: number | null
+          seller_price?: number | null
+          status?: string | null
+          target_company?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      rag_messages: {
+        Row: {
+          confidence: number | null
+          content: string
+          created_at: string | null
+          id: string
+          needs_human_review: boolean | null
+          project_id: string
+          role: string
+          sources: Json | null
+        }
+        Insert: {
+          confidence?: number | null
+          content: string
+          created_at?: string | null
+          id?: string
+          needs_human_review?: boolean | null
+          project_id: string
+          role: string
+          sources?: Json | null
+        }
+        Update: {
+          confidence?: number | null
+          content?: string
+          created_at?: string | null
+          id?: string
+          needs_human_review?: boolean | null
+          project_id?: string
+          role?: string
+          sources?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rag_messages_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
