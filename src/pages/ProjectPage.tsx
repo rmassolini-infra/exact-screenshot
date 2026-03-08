@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Eye, Box, Zap, Clock, MessageSquare, FileDown, Search } from 'lucide-react';
 import { useProject, useProjectAssets, useProjectInferencesGIE, useProjectInferencesATGI, useProjectPassivo, useAssetTimeline } from '@/hooks/useProjectData';
@@ -13,6 +14,8 @@ import AssetTimeline from '@/components/AssetTimeline';
 import AssetDetailSheet from '@/components/AssetDetailSheet';
 import RagChat from '@/components/RagChat';
 import { Input } from '@/components/ui/input';
+import { exportPdf } from '@/lib/exportPdf';
+import { exportXlsx } from '@/lib/exportXlsx';
 
 const tabs = [
   { id: 'overview', label: 'Visão Geral', icon: Eye },
@@ -72,6 +75,26 @@ const ProjectPage = () => {
   ];
 
   const netImpactGIE = (inferencesGIE as any[]).reduce((s: number, inf: any) => s + (inf.impact_value ?? 0), 0);
+
+  const handleExportPdf = useCallback(() => {
+    try {
+      exportPdf({ project, assets: assets as any[], inferencesGIE: inferencesGIE as any[], inferencesATGI: inferencesATGI as any[], passivo, kpis, gapSummary });
+      toast.success('PDF gerado com sucesso!');
+    } catch (e) {
+      toast.error('Erro ao gerar PDF');
+      console.error(e);
+    }
+  }, [project, assets, inferencesGIE, inferencesATGI, passivo, kpis, gapSummary]);
+
+  const handleExportXlsx = useCallback(() => {
+    try {
+      exportXlsx({ projectName: (project as any)?.name ?? 'projeto', assets: assets as any[], inferencesGIE: inferencesGIE as any[], passivo, gapSummary });
+      toast.success('XLSX exportado com sucesso!');
+    } catch (e) {
+      toast.error('Erro ao exportar XLSX');
+      console.error(e);
+    }
+  }, [project, assets, inferencesGIE, passivo, gapSummary]);
 
   if (!project) {
     return (
@@ -328,13 +351,13 @@ const ProjectPage = () => {
                 Gere o relatório completo com inventário, valoração, inferências GIE/ATGI e Passivo Total Ajustado.
               </p>
               <div className="flex justify-center gap-3 flex-wrap">
-                <button className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
+                <button onClick={handleExportPdf} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
                   📄 Gerar PDF Executivo
                 </button>
                 <button className="px-4 py-2 rounded-lg bg-muted text-muted-foreground text-sm font-medium hover:bg-muted/80 transition-colors border border-border">
                   🗂 Exportar XML SGPED/ANEEL
                 </button>
-                <button className="px-4 py-2 rounded-lg bg-muted text-muted-foreground text-sm font-medium hover:bg-muted/80 transition-colors border border-border">
+                <button onClick={handleExportXlsx} className="px-4 py-2 rounded-lg bg-muted text-muted-foreground text-sm font-medium hover:bg-muted/80 transition-colors border border-border">
                   📊 Exportar XLSX Inventário
                 </button>
               </div>
