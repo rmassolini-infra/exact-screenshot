@@ -1,6 +1,6 @@
-// Mock data — untyped to allow extended fields not in DB schema
+import type { Project, Asset, InferenceGIE, InferenceATGI, TimelineEvent, PassivoAjustado, PipelineStep, RagMessage, GapSummary } from '@/types/grafter';
 
-export const mockProjects: any[] = [
+export const mockProjects: Project[] = [
   {
     id: 'proj-001',
     name: 'DD Taesa Target Nordeste Q2 2026',
@@ -51,7 +51,7 @@ export const mockProjects: any[] = [
   },
 ];
 
-export const mockAssets: any[] = [
+export const mockAssets: Asset[] = [
   { id: 'ast-001', project_id: 'proj-001', codigo: 'TR-2018-042', tipo: 'transformador', fabricante: 'ABB', modelo: 'KTRT 500kV', numero_serie: 'ABB-2018-42901', data_aquisicao: '2018-03-15', capex_original: 12500000, capex_corrigido: 16875000, vida_util_contratada_anos: 30, vida_util_restante_anos: 22.3, depreciacao_aneel_pct: 26.7, depreciacao_fisica_pct: 34.2, valor_atual: 11109375, risk_score: 'CRITICAL', timeline_coverage_pct: 58, conformidade_score: 0.62 },
   { id: 'ast-002', project_id: 'proj-001', codigo: 'TR-2018-087', tipo: 'transformador', fabricante: 'Siemens', modelo: 'TLSN 230kV', numero_serie: 'SIE-2018-87443', data_aquisicao: '2018-06-22', capex_original: 8200000, capex_corrigido: 11070000, vida_util_contratada_anos: 30, vida_util_restante_anos: 24.1, depreciacao_aneel_pct: 26.7, depreciacao_fisica_pct: 22.8, valor_atual: 8541900, risk_score: 'LOW', timeline_coverage_pct: 92, conformidade_score: 0.95 },
   { id: 'ast-003', project_id: 'proj-001', codigo: 'DJ-2015-014', tipo: 'disjuntor', fabricante: 'ABB', modelo: 'LTB 362kV', numero_serie: 'ABB-2015-14002', data_aquisicao: '2015-01-10', capex_original: 3400000, capex_corrigido: 5270000, vida_util_contratada_anos: 25, vida_util_restante_anos: 14.0, depreciacao_aneel_pct: 44.0, depreciacao_fisica_pct: 48.5, valor_atual: 2714050, risk_score: 'HIGH', timeline_coverage_pct: 71, conformidade_score: 0.78 },
@@ -60,7 +60,7 @@ export const mockAssets: any[] = [
   { id: 'ast-006', project_id: 'proj-001', codigo: 'CB-2017-055', tipo: 'cabo', fabricante: 'Nexans', modelo: 'ACSR 795 MCM', numero_serie: 'NEX-2017-05500', data_aquisicao: '2017-11-30', capex_original: 2100000, capex_corrigido: 2940000, vida_util_contratada_anos: 35, vida_util_restante_anos: 26.2, depreciacao_aneel_pct: 25.7, depreciacao_fisica_pct: 18.4, valor_atual: 2398860, risk_score: 'LOW', timeline_coverage_pct: 88, conformidade_score: 0.91 },
 ];
 
-export const mockInferencesGIE: any[] = [
+export const mockInferencesGIE: InferenceGIE[] = [
   {
     id: 'gie-1', project_id: 'proj-001', asset_id: null, inference_id: 'INF-M1',
     title: 'Score de Risco Global — Concentração CRITICAL',
@@ -251,7 +251,7 @@ export const mockInferencesGIE: any[] = [
   },
 ];
 
-export const mockInferencesATGI: any[] = [
+export const mockInferencesATGI: InferenceATGI[] = [
   {
     id: 'atgi-1', project_id: 'proj-001', asset_id: 'ast-001', inference_id: 'INF-T1',
     title: 'Score de Cobertura Timeline',
@@ -352,7 +352,7 @@ export const mockInferencesATGI: any[] = [
   },
 ];
 
-export const mockTimelineEvents: any[] = [
+export const mockTimelineEvents: TimelineEvent[] = [
   { id: 'te-1', asset_id: 'ast-001', layer: 'edital', event_date: '2017-06-01', event_type: 'especificacao', description: 'Edital de Concessão Nº 042/2015 — Especificação contratada: Transformador 500kV ABB KTRT Classe 1 (NBR 5356)', has_resolution: true, gap_type: null, source_doc: 'Edital-Concessão-2015-042' },
   { id: 'te-2', asset_id: 'ast-001', layer: 'as_built', event_date: '2018-03-15', event_type: 'instalacao_componente', description: 'Comissionamento: ABB KTRT 500kV instalado — Classe 2 detectada (⚠ desvio de especificação Art. 32 REN 674)', has_resolution: false, gap_type: 'TIPO_1', severity: 'major', impact_value: 2400000, source_doc: 'As-Built-TR042-2018' },
   { id: 'te-3', asset_id: 'ast-001', layer: 'manutencao', event_date: '2019-01-20', event_type: 'inspecao', description: 'Inspeção preventiva semestral — sem anomalias. Análise de óleo: DGA normal. Termografia: OK.', has_resolution: true, gap_type: null, source_doc: 'OS-2019-012' },
@@ -371,14 +371,14 @@ export const mockTimelineEvents: any[] = [
   { id: 'te-13', asset_id: 'ast-001', layer: 'manutencao', event_date: '2024-12-15', event_type: 'inspecao', description: 'Inspeção semestral — sem anomalias. Certificação NBR 5356 vencida desde Abr/2023 (⚠ pendente renovação).', has_resolution: true, gap_type: null, severity: 'minor', source_doc: 'OS-2024-276' },
 ];
 
-export const mockGapSummary: any[] = [
+export const mockGapSummary: GapSummary[] = [
   { tipo: 'TIPO 1', desc: 'Desvio de especificação edital × as-built', ativos: 4, impacto: -42000000, regulatory_ref: 'REN 674/2015 Art. 32', severity: 'critical', remediation_estimate: '12-18 meses' },
   { tipo: 'TIPO 2', desc: 'Manutenção preventiva não executada conforme fabricante', ativos: 12, impacto: -18000000, regulatory_ref: 'MCPSE Módulo 12 §5.2', severity: 'major', remediation_estimate: '3-6 meses catch-up' },
   { tipo: 'TIPO 3', desc: 'Eventos regulatórios sem resolução ou provisão', ativos: 3, impacto: -8500000, regulatory_ref: 'REN 63/2004; Lei 9.427/1996', severity: 'critical', remediation_estimate: 'N/A — provisionar' },
   { tipo: 'TIPO 4', desc: 'Divergência entre valor contábil e estado físico real', ativos: 8, impacto: -19000000, regulatory_ref: 'CPC 27; REN 674 Anexo I', severity: 'major', remediation_estimate: 'Ajuste de modelo financeiro' },
 ];
 
-export const mockPassivo: any = {
+export const mockPassivo: PassivoAjustado = {
   seller_price: 850000000,
   ajuste_tipo1: 42000000,
   ajuste_tipo2: 18000000,
@@ -391,7 +391,7 @@ export const mockPassivo: any = {
   delta_pct: 10.7,
 };
 
-export const mockPipelineSteps: any[] = [
+export const mockPipelineSteps: PipelineStep[] = [
   { id: 'M-01', label: 'OCR Semântico', status: 'done', duration: '4m 23s' },
   { id: 'M-02', label: 'RAG Indexação', status: 'done', duration: '2m 11s' },
   { id: 'M-03', label: 'Motor de Valoração', status: 'done', duration: '1m 45s' },
@@ -399,7 +399,7 @@ export const mockPipelineSteps: any[] = [
   { id: 'M-05', label: 'Pipeline ATGI', status: 'done', duration: '2m 54s' },
 ];
 
-export const mockRagMessages: any[] = [
+export const mockRagMessages: RagMessage[] = [
   { id: 'msg-1', role: 'user', content: 'Qual o histórico de falhas críticas dos transformadores listados nas NFs de 2018?' },
   { id: 'msg-2', role: 'assistant', content: 'Identifiquei 3 transformadores adquiridos em 2018 com histórico de falhas:\n\n1. **TR-2018-042** (ABB, 500kV) — 2 falhas críticas (2021, 2023). Última: desligamento de emergência em Jun/2023, sem laudo de resolução.\n\n2. **TR-2018-087** (Siemens, 230kV) — 1 falha menor (2020), resolvida.\n\n3. **TR-2018-091** (WEG, 138kV) — sem falhas registradas, manutenção em dia.', sources: [{ doc_name: 'NF-2018-0042', page: 3 }, { doc_name: 'Laudo-Inspecao-2023-06.pdf', page: 7 }, { doc_name: 'OS-2020-114.pdf', page: 2 }], confidence: 0.96, needs_human_review: false },
 ];

@@ -38,10 +38,8 @@ const RagChat = ({ projectId }: { projectId: string }) => {
     role: m.role as 'user' | 'assistant',
     content: m.content,
     sources: m.sources as any,
-    confidence: m.confidence ?? null,
-    needs_human_review: m.needs_human_review ?? null,
-    project_id: m.project_id,
-    created_at: m.created_at,
+    confidence: m.confidence ?? undefined,
+    needs_human_review: m.needs_human_review ?? undefined,
   }));
 
   useEffect(() => {

@@ -93,18 +93,10 @@ const NewProjectPage = () => {
         setFiles(prev => prev.map((file, idx) => idx === i ? { ...file, status: 'done' } : file));
       }
 
-      // 3. Invoke process-project edge function
-      const { error: processError } = await supabase.functions.invoke('process-project', {
-        body: { project_id: project.id },
-      });
+      // 3. Update project status
+      await supabase.from('projects').update({ status: 'processing' }).eq('id', project.id);
 
-      if (processError) {
-        console.error('Process-project invocation error:', processError);
-        toast.warning('Projeto criado, mas processamento pode demorar a iniciar.');
-      } else {
-        toast.success('Projeto criado! Processamento iniciado.');
-      }
-
+      toast.success('Projeto criado! Processamento iniciado.');
       navigate(`/projects/${project.id}`);
     } catch (error: any) {
       toast.error(`Erro: ${error.message}`);
