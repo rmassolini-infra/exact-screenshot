@@ -15,6 +15,7 @@ import AssetDetailSheet from '@/components/AssetDetailSheet';
 import AssetInventoryTab from '@/components/AssetInventoryTab';
 import InferenceATGICard from '@/components/InferenceATGICard';
 import OverviewCharts from '@/components/OverviewCharts';
+import OverviewTab from '@/components/OverviewTab';
 import RagChat from '@/components/RagChat';
 import { Input } from '@/components/ui/input';
 import { exportPdf } from '@/lib/exportPdf';
@@ -147,33 +148,16 @@ const ProjectPage = () => {
 
       <motion.div key={activeTab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
         {activeTab === 'overview' && (
-          <div className="space-y-6">
-            <PipelineStatus steps={mockPipelineSteps} />
-
-            <div className="glass-panel p-4">
-              <h3 className="text-xs text-muted-foreground uppercase tracking-wider mb-4">KPIs em Tempo Real</h3>
-              <div className="space-y-3">
-                {kpis.map((kpi) => (
-                  <div key={kpi.label} className="flex items-center gap-3">
-                    <span className="text-sm text-muted-foreground w-44 shrink-0">{kpi.label}</span>
-                    <div className="flex-1 h-2 rounded-full bg-muted/30">
-                      {kpi.value !== null && (
-                        <div className={`h-full rounded-full ${kpi.met ? 'bg-green-brand' : 'bg-amber-brand'}`}
-                          style={{ width: `${Math.min(kpi.value, 100)}%` }} />
-                      )}
-                    </div>
-                    <span className="font-mono text-sm w-16 text-right">{kpi.value !== null ? `${kpi.value}%` : '—'}</span>
-                    <span className="text-xs text-muted-foreground w-20">meta: ≥{kpi.target}%</span>
-                    <span className="text-sm w-6">{kpi.met ? '✓' : '⏳'}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <OverviewCharts assets={assets as any[]} inferencesGIE={inferencesGIE as any[]} kpis={kpis} />
-
-            {passivo && <PassivoCard passivo={passivo as any} />}
-          </div>
+          <OverviewTab
+            project={project}
+            assets={assets as any[]}
+            inferencesGIE={inferencesGIE as any[]}
+            inferencesATGI={inferencesATGI as any[]}
+            passivo={passivo as any}
+            pipelineSteps={mockPipelineSteps}
+            kpis={kpis}
+            gapSummary={gapSummary}
+          />
         )}
 
         {activeTab === 'assets' && (
