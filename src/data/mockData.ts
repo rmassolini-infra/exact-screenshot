@@ -251,7 +251,7 @@ export const mockInferencesGIE: any[] = [
   },
 ];
 
-export const mockInferencesATGI: InferenceATGI[] = [
+export const mockInferencesATGI: any[] = [
   {
     id: 'atgi-1', project_id: 'proj-001', asset_id: 'ast-001', inference_id: 'INF-T1',
     title: 'Score de Cobertura Timeline',
