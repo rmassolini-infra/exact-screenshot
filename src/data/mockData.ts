@@ -391,7 +391,7 @@ export const mockPassivo: any = {
   delta_pct: 10.7,
 };
 
-export const mockPipelineSteps: PipelineStep[] = [
+export const mockPipelineSteps: any[] = [
   { id: 'M-01', label: 'OCR Semântico', status: 'done', duration: '4m 23s' },
   { id: 'M-02', label: 'RAG Indexação', status: 'done', duration: '2m 11s' },
   { id: 'M-03', label: 'Motor de Valoração', status: 'done', duration: '1m 45s' },
