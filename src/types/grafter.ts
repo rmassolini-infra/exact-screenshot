@@ -2,34 +2,39 @@ export interface Project {
   id: string;
   name: string;
   target_company: string;
-  status: 'ingesting' | 'processing' | 'ready' | 'complete';
-  seller_price: number;
+  status: string;
+  seller_price: number | null;
   passivo_total_ajustado: number | null;
-  asset_count: number;
-  avg_risk: string;
-  inference_count: number;
-  created_at: string;
+  created_at: string | null;
+  updated_at: string | null;
+  user_id: string;
+  kpi_ocr_precision: number | null;
+  kpi_dd_reduction: number | null;
+  kpi_gie_accuracy: number | null;
+  kpi_atgi_coverage: number | null;
 }
 
 export interface Asset {
   id: string;
   project_id: string;
-  codigo: string;
-  tipo: string;
-  fabricante: string;
-  modelo: string;
-  numero_serie: string;
-  data_aquisicao: string;
-  capex_original: number;
-  capex_corrigido: number;
-  vida_util_contratada_anos: number;
-  vida_util_restante_anos: number;
-  depreciacao_aneel_pct: number;
-  depreciacao_fisica_pct: number;
-  valor_atual: number;
-  risk_score: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  timeline_coverage_pct: number;
-  conformidade_score: number;
+  codigo: string | null;
+  tipo: string | null;
+  fabricante: string | null;
+  modelo: string | null;
+  numero_serie: string | null;
+  data_aquisicao: string | null;
+  capex_original: number | null;
+  capex_corrigido_ipca: number | null;
+  vida_util_contratada_anos: number | null;
+  vida_util_restante_anos: number | null;
+  depreciacao_aneel_pct: number | null;
+  depreciacao_fisica_pct: number | null;
+  valor_atual: number | null;
+  risk_score: string | null;
+  timeline_coverage_pct: number | null;
+  conformidade_score: number | null;
+  source_documents: any | null;
+  created_at: string | null;
 }
 
 export interface SourceDocument {
@@ -52,77 +57,67 @@ export interface InferenceGIE {
   asset_id: string | null;
   inference_id: string;
   title: string;
-  level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  impact_value: number;
-  finding: string;
-  recommendation: string;
-  source_documents: SourceDocument[];
-  confidence_score: number;
-  // New technical fields
-  methodology?: string;
-  regulatory_basis?: string;
-  affected_assets?: number;
-  sensitivity?: SensitivityRange[];
-  calculation_memo?: string;
-  cross_references?: string[];
-  validation_status?: 'validated' | 'pending_review' | 'requires_field_inspection';
+  level: string;
+  impact_value: number | null;
+  finding: string | null;
+  recommendation: string | null;
+  source_documents: any | null;
+  confidence_score: number | null;
+  created_at: string | null;
 }
 
 export interface InferenceATGI {
   id: string;
   project_id: string;
-  asset_id: string;
+  asset_id: string | null;
   inference_id: string;
   title: string;
   gap_type: string | null;
-  value: number;
-  finding: string;
-  // New technical fields
-  methodology?: string;
-  regulatory_basis?: string;
-  severity?: 'critical' | 'major' | 'minor' | 'observation';
-  remediation_cost?: number;
-  remediation_timeline?: string;
-  affected_period?: { start: string; end: string };
-  source_documents?: SourceDocument[];
-  cross_references?: string[];
+  value: number | null;
+  finding: string | null;
+  source_documents: any | null;
+  created_at: string | null;
 }
 
 export interface TimelineEvent {
   id: string;
   asset_id: string;
-  layer: 'edital' | 'as_built' | 'manutencao' | 'operacional';
-  event_date: string;
-  event_type: string;
-  description: string;
-  has_resolution: boolean;
+  layer: string;
+  event_date: string | null;
+  event_type: string | null;
+  description: string | null;
+  has_resolution: boolean | null;
   gap_type: string | null;
-  // New fields
-  impact_value?: number;
-  source_doc?: string;
-  severity?: 'critical' | 'major' | 'minor';
+  impact_value: number | null;
+  source_doc_id: string | null;
+  created_at: string | null;
 }
 
 export interface PassivoAjustado {
-  seller_price: number;
-  ajuste_tipo1: number;
-  ajuste_tipo2: number;
-  ajuste_tipo3: number;
-  ajuste_tipo4: number;
-  passivo_oculto_gie: number;
-  passivo_regulatorio: number;
-  passivo_total_ajustado: number;
-  delta_absoluto: number;
-  delta_pct: number;
+  id: string;
+  project_id: string;
+  seller_price: number | null;
+  ajuste_tipo1: number | null;
+  ajuste_tipo2: number | null;
+  ajuste_tipo3: number | null;
+  ajuste_tipo4: number | null;
+  passivo_oculto_gie: number | null;
+  passivo_regulatorio: number | null;
+  passivo_total_ajustado: number | null;
+  delta_absoluto: number | null;
+  delta_pct: number | null;
+  calculated_at: string | null;
 }
 
 export interface RagMessage {
   id: string;
-  role: 'user' | 'assistant';
+  role: string;
   content: string;
-  sources?: { doc_name: string; page: number }[];
-  confidence?: number;
-  needs_human_review?: boolean;
+  sources?: any | null;
+  confidence?: number | null;
+  needs_human_review?: boolean | null;
+  project_id: string;
+  created_at: string | null;
 }
 
 export interface PipelineStep {
