@@ -376,7 +376,7 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
 
         {/* 6. KPIs */}
         <motion.div {...anim} transition={{ delay: 0.25 }} className="rounded-xl border border-border bg-card overflow-hidden">
-          <SectionHeader id="kpis" icon={Shield} title="KPIs de Validação" subtitle="Holdout WP4 — Threshold de aprovação" badge={`${kpis.filter(k => k.met).length}/${kpis.length} atingidos`} />
+          <SectionHeader id="kpis" icon={Shield} title="Metas de KPI (a pactuar na Etapa 2)" subtitle="Valores ilustrativos com dados sintéticos" />
           {expandedSections.kpis && (
             <div className="px-5 pb-5">
               <div className="space-y-3">
@@ -385,18 +385,19 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
                     <span className="text-xs text-muted-foreground w-40 shrink-0">{kpi.label}</span>
                     <div className="flex-1 h-3 rounded-full bg-muted/30 overflow-hidden relative">
                       {kpi.value !== null && (
-                        <div className={`h-full rounded-full transition-all ${kpi.met ? 'bg-green-brand' : 'bg-amber-brand'}`}
+                        <div className="h-full rounded-full transition-all bg-amber-brand/70"
                           style={{ width: `${Math.min(kpi.value, 100)}%` }} />
                       )}
                       <div className="absolute top-0 h-full w-px bg-foreground/40" style={{ left: `${kpi.target}%` }} />
                     </div>
                     <span className="font-mono text-xs font-bold w-14 text-right">{kpi.value !== null ? `${kpi.value}%` : '—'}</span>
-                    <span className={`text-[9px] px-2 py-0.5 rounded font-mono ${
-                      kpi.met ? 'bg-green-brand/10 text-green-brand border border-green-brand/20' : 'bg-amber-brand/10 text-amber-brand border border-amber-brand/20'
-                    }`}>{kpi.met ? '✓ PASS' : '⏳'}</span>
+                    <span className="text-[9px] px-2 py-0.5 rounded font-mono bg-amber-brand/10 text-amber-brand border border-amber-brand/20">SIMULADO</span>
                   </div>
                 ))}
               </div>
+              <p className="text-[9px] text-muted-foreground mt-3">
+                Metas contratuais: cobertura ≥ 98%, precisão ≥ 92%, redução de tempo ≥ 60%.
+              </p>
             </div>
           )}
         </motion.div>
