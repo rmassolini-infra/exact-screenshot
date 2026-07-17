@@ -223,7 +223,7 @@ const OverviewTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, 
       <motion.div {...anim} transition={{ delay: 0.15 }} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Risk Donut */}
         <div className="glass-panel p-4">
-          <h3 className="text-[10px] text-muted-foreground uppercase tracking-wider mb-3">Distribuição de Risco — Random Forest (14 features)</h3>
+          <h3 className="text-[10px] text-muted-foreground uppercase tracking-wider mb-3">Distribuição de Risco — modelo de risco Grafter</h3>
           <ResponsiveContainer width="100%" height={220}>
             <PieChart>
               <Pie data={riskDistribution} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3} dataKey="value" stroke="none">
@@ -243,9 +243,6 @@ const OverviewTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, 
               <Legend formatter={(v: string) => <span className="text-[10px] text-muted-foreground">{v}</span>} iconSize={8} />
             </PieChart>
           </ResponsiveContainer>
-          <p className="text-[8px] text-muted-foreground font-mono">
-            Features: coverage, gap_count, depr_delta, age_ratio, maintenance_freq, failure_history, capex_deviation, fabricante_concentration, regulatory_penalties, operational_incidents, spec_compliance, doc_quality, cross_ref_consistency, market_benchmark
-          </p>
         </div>
 
         {/* Depreciation Comparison */}
@@ -258,9 +255,7 @@ const OverviewTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, 
                 <div key={a.name} className="flex items-center gap-2">
                   <span className="font-mono text-[9px] text-cyan w-20 shrink-0 truncate">{a.name}</span>
                   <div className="flex-1 relative h-4">
-                    {/* ANEEL bar */}
                     <div className="absolute top-0 h-1.5 rounded-full bg-amber-brand/50" style={{ width: `${a.aneel}%` }} />
-                    {/* Physical bar */}
                     <div className={`absolute bottom-0 h-1.5 rounded-full ${delta > 0 ? 'bg-red-brand/70' : 'bg-green-brand/70'}`}
                       style={{ width: `${a.fisica}%` }} />
                   </div>
@@ -274,137 +269,23 @@ const OverviewTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, 
           </div>
           <div className="flex gap-4 mt-2 text-[8px] text-muted-foreground">
             <span className="flex items-center gap-1"><span className="w-3 h-1 rounded-sm bg-amber-brand/50 inline-block" /> ANEEL (REN 674)</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-1 rounded-sm bg-red-brand/70 inline-block" /> Física (Weibull)</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-1 rounded-sm bg-red-brand/70 inline-block" /> Física</span>
           </div>
         </div>
       </motion.div>
-
-      {/* ── GIE Impact Waterfall ── */}
-      <motion.div {...anim} transition={{ delay: 0.2 }} className="glass-panel p-4">
-        <h3 className="text-[10px] text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
-          <Zap className="w-3 h-3 text-cyan" /> Impacto Financeiro GIE — 8 Inferências M&A Proativas
-        </h3>
-        <ResponsiveContainer width="100%" height={Math.max(200, gieWaterfallData.length * 38)}>
-          <BarChart data={gieWaterfallData} layout="vertical" margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 40%, 22%)" horizontal={false} />
-            <XAxis
-              type="number"
-              tick={{ fill: 'hsl(214, 30%, 65%)', fontSize: 9 }}
-              axisLine={false} tickLine={false}
-              tickFormatter={(v: number) => `R$ ${(v / 1_000_000).toFixed(0)}M`}
-            />
-            <YAxis type="category" dataKey="name" tick={{ fill: 'hsl(214, 30%, 65%)', fontSize: 9 }} axisLine={false} tickLine={false} width={55} />
-            <Tooltip content={({ active, payload, label }: any) => {
-              if (!active || !payload?.length) return null;
-              const item = gieWaterfallData.find(d => d.name === label);
-              return (
-                <div className="rounded-lg border border-border bg-popover px-3 py-2 text-xs shadow-md max-w-xs">
-                  <p className="font-mono text-cyan mb-1">{label}</p>
-                  <p className="text-foreground text-[10px] mb-1">{item?.title}</p>
-                  <p className="text-muted-foreground">Impacto: <span className={`font-mono ${(item?.value ?? 0) < 0 ? 'text-red-brand' : 'text-green-brand'}`}>
-                    {formatCurrency(item?.value ?? 0)}
-                  </span></p>
-                </div>
-              );
-            }} />
-            <ReferenceLine x={0} stroke="hsl(214, 30%, 65%)" strokeDasharray="3 3" />
-            <Bar dataKey="value" radius={[0, 4, 4, 0]} maxBarSize={22}>
-              {gieWaterfallData.map((entry, i) => (
-                <Cell key={i} fill={entry.value < 0 ? 'hsl(355, 82%, 56%)' : 'hsl(160, 100%, 39%)'} fillOpacity={0.85} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-        <div className="flex justify-between items-center mt-2 pt-2 border-t border-border/30">
-          <span className="text-xs text-muted-foreground">Net Impact GIE Total</span>
-          <span className="font-mono font-bold text-red-brand">{formatCurrency(stats.netImpactGIE)}</span>
-        </div>
-      </motion.div>
-
-      {/* ── Passivo Total Ajustado ── */}
-      {passivo && (
-        <motion.div {...anim} transition={{ delay: 0.25 }} className="glass-panel-green p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-lg">💰</span>
-            <h3 className="text-[10px] font-semibold uppercase tracking-wider">Passivo Total Ajustado — Preço Justo de Aquisição</h3>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Waterfall Breakdown */}
-            <div className="space-y-2">
-              {[
-                { label: 'Preço declarado (base RAB)', value: passivo.seller_price, positive: true },
-                { label: '(-) Desvio instalação (ATGI T1)', value: -passivo.ajuste_tipo1, ref: 'REN 674 Art. 32' },
-                { label: '(-) Manutenção não executada (T2)', value: -passivo.ajuste_tipo2, ref: 'MCPSE Mod. 12' },
-                { label: '(-) Gaps regulatórios (T3)', value: -passivo.ajuste_tipo3, ref: 'REN 63/2004' },
-                { label: '(-) Divergência contábil-real (T4)', value: -passivo.ajuste_tipo4, ref: 'CPC 27' },
-                { label: '(-) Passivo Oculto GIE', value: -passivo.passivo_oculto_gie, ref: 'Cross-doc NLP' },
-                { label: '(-) Passivo Regulatório', value: -passivo.passivo_regulatorio, ref: 'SIGEFIS/ANEEL' },
-              ].map((l) => (
-                <div key={l.label} className="flex items-center justify-between text-sm py-1 border-b border-border/20">
-                  <div className="flex items-center gap-2">
-                    <span className="text-muted-foreground text-xs">{l.label}</span>
-                    {(l as any).ref && <span className="text-[7px] font-mono text-muted-foreground/60">{(l as any).ref}</span>}
-                  </div>
-                  <span className={`font-mono text-xs ${l.positive ? 'text-foreground' : 'text-red-brand'}`}>
-                    {formatCurrency(l.value)}
-                  </span>
-                </div>
-              ))}
-              <div className="border-t border-border pt-3 flex justify-between items-baseline">
-                <span className="font-semibold text-green-brand text-sm">= PREÇO JUSTO DE AQUISIÇÃO</span>
-                <span className="text-2xl font-mono font-bold text-green-brand">{formatCurrency(passivo.passivo_total_ajustado)}</span>
-              </div>
-            </div>
-
-            {/* Visual waterfall chart */}
-            <div>
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={passivoWaterfall} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 40%, 22%)" />
-                  <XAxis dataKey="name" tick={{ fill: 'hsl(214, 30%, 65%)', fontSize: 8 }} axisLine={false} tickLine={false} angle={-30} textAnchor="end" height={50} />
-                  <YAxis tick={{ fill: 'hsl(214, 30%, 65%)', fontSize: 9 }} axisLine={false} tickLine={false}
-                    tickFormatter={(v: number) => `R$ ${(v / 1_000_000).toFixed(0)}M`} />
-                  <Tooltip content={({ active, payload, label }: any) => {
-                    if (!active || !payload?.length) return null;
-                    return (
-                      <div className="rounded-lg border border-border bg-popover px-3 py-2 text-xs shadow-md">
-                        <p className="font-medium text-foreground">{label}</p>
-                        <p className="font-mono">{formatCurrency(payload[0].value)}</p>
-                      </div>
-                    );
-                  }} />
-                  <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={40}>
-                    {passivoWaterfall.map((entry, i) => (
-                      <Cell key={i} fill={entry.color} fillOpacity={0.85} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          <div className="flex justify-between text-sm p-3 rounded-lg bg-green-brand/10 border border-green-brand/20 mt-4">
-            <span className="text-green-brand font-medium">Proteção financeira identificada pelo Grafter</span>
-            <span className="font-mono font-bold text-green-brand">
-              {formatCurrency(-passivo.delta_absoluto)} (-{passivo.delta_pct}%)
-            </span>
-          </div>
-        </motion.div>
-      )}
 
       {/* ── Gap Summary Table ── */}
       <motion.div {...anim} transition={{ delay: 0.3 }} className="glass-panel overflow-hidden">
         <div className="p-4 pb-2">
           <h3 className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-            <Clock className="w-3 h-3 text-purple-brand" /> Resumo de Gaps ATGI — Impacto por Tipo
+            <Clock className="w-3 h-3 text-purple-brand" /> Resumo de Gaps ATGI — Tipos e Ativos Afetados
           </h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                {['Tipo', 'Descrição', 'Base Regulatória', 'Severidade', 'Ativos', 'Impacto', 'Remediação'].map(h => (
+                {['Tipo', 'Descrição', 'Base regulatória', 'Severidade', 'Ativos', 'Remediação'].map(h => (
                   <th key={h} className="px-4 py-2 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-left">{h}</th>
                 ))}
               </tr>
@@ -414,7 +295,7 @@ const OverviewTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, 
                 <tr key={g.tipo} className="border-b border-border/50">
                   <td className="px-4 py-2 font-mono text-red-brand text-xs">{g.tipo}</td>
                   <td className="px-4 py-2 text-xs">{g.desc}</td>
-                  <td className="px-4 py-2 text-[9px] font-mono text-muted-foreground">{g.regulatory_ref}</td>
+                  <td className="px-4 py-2 text-[9px] font-mono text-muted-foreground">Base regulatória: em consolidação</td>
                   <td className="px-4 py-2 text-center">
                     <span className={`text-[8px] font-mono px-1.5 py-0.5 rounded border ${
                       g.severity === 'critical' ? 'text-red-brand bg-red-brand/10 border-red-brand/20' :
@@ -423,7 +304,6 @@ const OverviewTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, 
                     }`}>{g.severity.toUpperCase()}</span>
                   </td>
                   <td className="px-4 py-2 font-mono text-right text-xs">{g.ativos}</td>
-                  <td className="px-4 py-2 font-mono text-right text-red-brand text-xs">{formatCurrency(g.impacto)}</td>
                   <td className="px-4 py-2 text-[9px] text-right text-muted-foreground">{g.remediation_estimate}</td>
                 </tr>
               ))}
@@ -432,11 +312,10 @@ const OverviewTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, 
         </div>
       </motion.div>
 
-      {/* ── Technical Footer ── */}
+      {/* ── Footer ── */}
       <motion.div {...anim} transition={{ delay: 0.35 }} className="text-center">
         <p className="text-[8px] font-mono text-muted-foreground">
-          Grafter Asset OS · P&D ANEEL PROPDI/PROPEE · Modelos: Random Forest + Weibull + Monte Carlo + NLP (Gemini 2.5 Pro) · 
-          Validação holdout WP4 (MAE: R$ 1.2M, MAPE: 5.1%, AUC-ROC: 0.87) · Base: 1.847 ativos setor elétrico 2015-2025 · CONFIDENCIAL
+          Grafter Asset OS · P&D ANEEL PROPDI/PROPEE · Demonstração sintética · CONFIDENCIAL
         </p>
       </motion.div>
     </div>
