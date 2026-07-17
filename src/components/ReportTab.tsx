@@ -313,7 +313,7 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
                       <td className="py-2 px-2 text-center">
                         <span className={`${riskBadgeClass(inf.level)} !text-[8px]`}>{inf.level}</span>
                       </td>
-                      <td className="py-2 px-2 font-mono text-right text-red-brand">{formatCurrency(inf.impact_value ?? 0)}</td>
+                      <td className="py-2 px-2 font-mono text-right text-xs">{inf.impact_value ? formatCurrency(inf.impact_value) : <span className="text-muted-foreground">—</span>}</td>
                       <td className="py-2 px-2 font-mono text-right">
                         {((inf.confidence_score ?? 0) * 100).toFixed(0)}%
                       </td>
