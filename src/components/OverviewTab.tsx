@@ -130,18 +130,18 @@ const OverviewTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, 
         <div className="glass-panel p-4">
           <div className="flex items-center gap-1.5 mb-2">
             <Zap className="w-3.5 h-3.5 text-red-brand" />
-            <span className="text-[9px] text-muted-foreground uppercase tracking-wider">Impacto GIE</span>
+            <span className="text-[9px] text-muted-foreground uppercase tracking-wider">Achados GIE</span>
           </div>
-          <p className="font-mono text-xl font-bold text-red-brand">{formatCurrency(stats.netImpactGIE)}</p>
-          <p className="text-[9px] text-muted-foreground mt-0.5">{inferencesGIE.length} inferências M&A</p>
+          <p className="font-mono text-xl font-bold">{inferencesGIE.length}</p>
+          <p className="text-[9px] text-muted-foreground mt-0.5">inferências geradas</p>
         </div>
         <div className="glass-panel p-4">
           <div className="flex items-center gap-1.5 mb-2">
             <Clock className="w-3.5 h-3.5 text-purple-brand" />
             <span className="text-[9px] text-muted-foreground uppercase tracking-wider">Gaps ATGI</span>
           </div>
-          <p className="font-mono text-xl font-bold text-red-brand">{formatCurrency(stats.totalGapImpact)}</p>
-          <p className="text-[9px] text-muted-foreground mt-0.5">{gapSummary.length} tipos · {inferencesATGI.length} inferências</p>
+          <p className="font-mono text-xl font-bold">{gapSummary.length} tipos</p>
+          <p className="text-[9px] text-muted-foreground mt-0.5">{inferencesATGI.length} inferências temporais</p>
         </div>
         <div className="glass-panel p-4">
           <div className="flex items-center gap-1.5 mb-2">
