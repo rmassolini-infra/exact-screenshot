@@ -136,144 +136,93 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
       {/* Report Body — print-ready layout */}
       <div className="space-y-4">
 
-        {/* 1. Executive Summary */}
+        {/* 1. Executive Summary — Sumário de Achados */}
         <motion.div {...anim} className="rounded-xl border border-border bg-card overflow-hidden">
-          <SectionHeader id="summary" icon={Shield} title="Sumário Executivo" subtitle="Visão consolidada do projeto" />
+          <SectionHeader id="summary" icon={Shield} title="Sumário de Achados" subtitle="Contagem de achados, gaps e pendências" />
           {expandedSections.summary && (
             <div className="px-5 pb-5 space-y-4">
+              {/* Empresa + Ativos */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 <div className="p-3 rounded-lg bg-muted/20 border border-border">
                   <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">Empresa-Alvo</p>
                   <p className="font-semibold text-sm">{project?.target_company}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-muted/20 border border-border">
-                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">Ativos Analisados</p>
+                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">Ativos analisados</p>
                   <p className="font-mono font-bold text-lg">{assets.length}</p>
-                  <p className="text-[9px] text-muted-foreground">CAPEX: {formatCurrency(stats.totalCapex)}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-muted/20 border border-border">
-                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">Preço Vendedor</p>
-                  <p className="font-mono font-bold text-lg">{formatCurrency(project?.seller_price ?? 0)}</p>
+                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">Achados GIE</p>
+                  <p className="font-mono font-bold text-lg">{inferencesGIE.length}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-muted/20 border border-border">
-                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">Preço Justo</p>
-                  <p className="font-mono font-bold text-lg text-green-brand">{formatCurrency(passivo?.passivo_total_ajustado ?? 0)}</p>
-                  {passivo && (
-                    <p className="text-[9px] text-green-brand font-mono">
-                      Proteção: {formatCurrency(Math.abs(passivo.delta_absoluto))} ({formatPercent(Math.abs(passivo.delta_pct))})
-                    </p>
-                  )}
+                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">Achados ATGI</p>
+                  <p className="font-mono font-bold text-lg">{inferencesATGI.length}</p>
                 </div>
               </div>
 
-              {/* Risk summary row */}
-              <div className="flex items-center gap-6 px-3 py-3 rounded-lg bg-muted/10 border border-border">
-                <div className="flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-red-brand" />
-                  <div>
-                    <p className="text-[9px] text-muted-foreground">Impacto GIE Total</p>
-                    <p className="font-mono font-bold text-red-brand text-sm">{formatCurrency(stats.netImpactGIE)}</p>
-                  </div>
+              {/* Achados por severidade */}
+              <div>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">Achados por severidade (GIE + ATGI)</p>
+                <div className="grid grid-cols-4 gap-2">
+                  {(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'] as const).map(level => {
+                    const gie = inferencesGIE.filter(i => (i.level ?? '').toUpperCase() === level).length;
+                    const atgiMap: Record<string, string> = { CRITICAL: 'critical', HIGH: 'major', MEDIUM: 'minor', LOW: 'observation' };
+                    const atgi = inferencesATGI.filter(i => (i.severity ?? '') === atgiMap[level]).length;
+                    const total = gie + atgi;
+                    const color =
+                      level === 'CRITICAL' ? 'text-red-brand border-red-brand/30 bg-red-brand/5' :
+                      level === 'HIGH' ? 'text-amber-brand border-amber-brand/30 bg-amber-brand/5' :
+                      level === 'MEDIUM' ? 'text-cyan border-cyan/30 bg-cyan/5' :
+                      'text-muted-foreground border-border bg-muted/20';
+                    return (
+                      <div key={level} className={`p-3 rounded-lg border ${color}`}>
+                        <p className="text-[9px] font-mono uppercase tracking-wider opacity-80">{level}</p>
+                        <p className="font-mono font-bold text-2xl">{total}</p>
+                      </div>
+                    );
+                  })}
                 </div>
-                <Separator orientation="vertical" className="h-8" />
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-red-brand" />
-                  <div>
-                    <p className="text-[9px] text-muted-foreground">Impacto Gaps ATGI</p>
-                    <p className="font-mono font-bold text-red-brand text-sm">{formatCurrency(stats.totalGapImpact)}</p>
-                  </div>
+              </div>
+
+              {/* Gaps por tipo (1 a 4) */}
+              <div>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">Gaps por tipo (T1–T4)</p>
+                <div className="grid grid-cols-4 gap-2">
+                  {gapSummary.map(g => (
+                    <div key={g.tipo} className="p-3 rounded-lg border border-border bg-muted/20">
+                      <p className="text-[9px] font-mono text-muted-foreground uppercase">{g.tipo}</p>
+                      <p className="font-mono font-bold text-lg">{g.ativos}</p>
+                      <p className="text-[9px] text-muted-foreground line-clamp-1">{g.desc}</p>
+                    </div>
+                  ))}
                 </div>
-                <Separator orientation="vertical" className="h-8" />
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-brand" />
-                  <div>
-                    <p className="text-[9px] text-muted-foreground">Ativos Alto Risco</p>
-                    <p className="font-mono font-bold text-amber-brand text-sm">
-                      {stats.riskDist.CRITICAL + stats.riskDist.HIGH} ({formatPercent(assets.length ? ((stats.riskDist.CRITICAL + stats.riskDist.HIGH) / assets.length) * 100 : 0)})
-                    </p>
+              </div>
+
+              {/* Revisão humana + Cobertura */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 rounded-lg bg-amber-brand/5 border border-amber-brand/20">
+                  <div className="flex items-center gap-2 mb-1">
+                    <AlertTriangle className="w-4 h-4 text-amber-brand" />
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Pendentes de revisão humana</p>
                   </div>
+                  <p className="font-mono font-bold text-2xl text-amber-brand">
+                    {inferencesGIE.filter((i: any) => i.validation_status === 'pending_review' || i.validation_status === 'requires_field_inspection').length}
+                  </p>
                 </div>
-                <Separator orientation="vertical" className="h-8" />
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-green-brand" />
-                  <div>
-                    <p className="text-[9px] text-muted-foreground">KPIs Atingidos</p>
-                    <p className="font-mono font-bold text-green-brand text-sm">{kpis.filter(k => k.met).length}/{kpis.length}</p>
+                <div className="p-3 rounded-lg bg-cyan/5 border border-cyan/20">
+                  <div className="flex items-center gap-2 mb-1">
+                    <CheckCircle2 className="w-4 h-4 text-cyan" />
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Cobertura documental média</p>
                   </div>
+                  <p className="font-mono font-bold text-2xl text-cyan">
+                    {formatPercent(assets.length ? assets.reduce((s, a) => s + (a.timeline_coverage_pct ?? 0), 0) / assets.length : 0)}
+                  </p>
                 </div>
               </div>
             </div>
           )}
         </motion.div>
-
-        {/* 2. Passivo Total Ajustado */}
-        {passivo && (
-          <motion.div {...anim} transition={{ delay: 0.05 }} className="rounded-xl border border-border bg-card overflow-hidden">
-            <SectionHeader id="passivo" icon={TrendingDown} title="Passivo Total Ajustado" subtitle="Waterfall de ajustes e preço justo" badge={formatCurrency(passivo.passivo_total_ajustado)} />
-            {expandedSections.passivo && (
-              <div className="px-5 pb-5">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Waterfall Chart */}
-                  <div>
-                    <ResponsiveContainer width="100%" height={280}>
-                      <BarChart data={passivoWaterfall} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 40%, 22%)" />
-                        <XAxis dataKey="name" tick={{ fill: 'hsl(214, 30%, 65%)', fontSize: 8 }} axisLine={false} tickLine={false} />
-                        <YAxis tick={{ fill: 'hsl(214, 30%, 65%)', fontSize: 9 }} axisLine={false} tickLine={false}
-                          tickFormatter={(v: number) => `R$ ${(v / 1_000_000).toFixed(0)}M`} />
-                        <Tooltip content={({ active, payload }: any) => {
-                          if (!active || !payload?.length) return null;
-                          return (
-                            <div className="rounded-lg border border-border bg-popover px-3 py-2 text-xs shadow-md">
-                              <p className="font-medium">{payload[0]?.payload?.name}</p>
-                              <p className="font-mono">{formatCurrency(payload[0]?.value ?? 0)}</p>
-                            </div>
-                          );
-                        }} />
-                        <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                          {passivoWaterfall.map((entry, i) => (
-                            <Cell key={i} fill={entry.color} />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-
-                  {/* Line items */}
-                  <div className="space-y-2">
-                    {[
-                      { label: 'Preço declarado (base RAB)', value: passivo.seller_price, positive: true },
-                      { label: '(-) Desvio de instalação (ATGI T1)', value: -passivo.ajuste_tipo1 },
-                      { label: '(-) Manutenção não executada (T2)', value: -passivo.ajuste_tipo2 },
-                      { label: '(-) Gaps regulatórios (T3)', value: -passivo.ajuste_tipo3 },
-                      { label: '(-) Divergência contábil-real (T4)', value: -passivo.ajuste_tipo4 },
-                      { label: '(-) Passivo oculto GIE', value: -passivo.passivo_oculto_gie },
-                      { label: '(-) Passivo regulatório', value: -passivo.passivo_regulatorio },
-                    ].map(l => (
-                      <div key={l.label} className="flex justify-between text-sm py-1.5 px-2 rounded hover:bg-muted/20">
-                        <span className="text-muted-foreground text-xs">{l.label}</span>
-                        <span className={`font-mono text-xs ${l.positive ? 'text-foreground' : 'text-red-brand'}`}>
-                          {formatCurrency(l.value)}
-                        </span>
-                      </div>
-                    ))}
-                    <Separator />
-                    <div className="flex justify-between items-baseline px-2 py-2">
-                      <span className="font-semibold text-green-brand text-sm">= PREÇO JUSTO DE AQUISIÇÃO</span>
-                      <span className="text-xl font-mono font-bold text-green-brand">{formatCurrency(passivo.passivo_total_ajustado)}</span>
-                    </div>
-                    <div className="flex justify-between text-sm px-3 py-2.5 rounded-lg bg-green-brand/10 border border-green-brand/20">
-                      <span className="text-green-brand font-medium">Proteção financeira</span>
-                      <span className="font-mono font-bold text-green-brand">
-                        {formatCurrency(Math.abs(passivo.delta_absoluto))} (-{formatPercent(Math.abs(passivo.delta_pct))})
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </motion.div>
-        )}
 
         {/* 3. Asset Inventory Summary */}
         <motion.div {...anim} transition={{ delay: 0.1 }} className="rounded-xl border border-border bg-card overflow-hidden">
@@ -339,7 +288,7 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
 
         {/* 4. GIE Inferences */}
         <motion.div {...anim} transition={{ delay: 0.15 }} className="rounded-xl border border-border bg-card overflow-hidden">
-          <SectionHeader id="gie" icon={Zap} title="Inferências GIE — Grafter Inference Engine" subtitle={`${inferencesGIE.length} inferências M&A proativas`} badge={formatCurrency(stats.netImpactGIE)} />
+          <SectionHeader id="gie" icon={Zap} title="Inferências GIE — Grafter Inference Engine" subtitle={`${inferencesGIE.length} inferências`} />
           {expandedSections.gie && (
             <div className="px-5 pb-5">
               <table className="w-full text-xs">
@@ -348,7 +297,7 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
                     <th className="text-left py-2 px-2 text-[9px] text-muted-foreground uppercase">ID</th>
                     <th className="text-left py-2 px-2 text-[9px] text-muted-foreground uppercase">Título</th>
                     <th className="text-center py-2 px-2 text-[9px] text-muted-foreground uppercase">Nível</th>
-                    <th className="text-right py-2 px-2 text-[9px] text-muted-foreground uppercase">Impacto</th>
+                    <th className="text-right py-2 px-2 text-[9px] text-muted-foreground uppercase">Valor citado</th>
                     <th className="text-right py-2 px-2 text-[9px] text-muted-foreground uppercase">Confiança</th>
                     <th className="text-center py-2 px-2 text-[9px] text-muted-foreground uppercase">Status</th>
                   </tr>
@@ -364,7 +313,7 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
                       <td className="py-2 px-2 text-center">
                         <span className={`${riskBadgeClass(inf.level)} !text-[8px]`}>{inf.level}</span>
                       </td>
-                      <td className="py-2 px-2 font-mono text-right text-red-brand">{formatCurrency(inf.impact_value ?? 0)}</td>
+                      <td className="py-2 px-2 font-mono text-right text-xs">{inf.impact_value ? formatCurrency(inf.impact_value) : <span className="text-muted-foreground">—</span>}</td>
                       <td className="py-2 px-2 font-mono text-right">
                         {((inf.confidence_score ?? 0) * 100).toFixed(0)}%
                       </td>
@@ -381,13 +330,6 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
                     </tr>
                   ))}
                 </tbody>
-                <tfoot>
-                  <tr className="border-t-2 border-border">
-                    <td colSpan={3} className="py-2 px-2 font-semibold text-xs">Net Impact GIE</td>
-                    <td className="py-2 px-2 font-mono font-bold text-right text-red-brand">{formatCurrency(stats.netImpactGIE)}</td>
-                    <td colSpan={2} />
-                  </tr>
-                </tfoot>
               </table>
             </div>
           )}
@@ -395,7 +337,7 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
 
         {/* 5. Gap Summary ATGI */}
         <motion.div {...anim} transition={{ delay: 0.2 }} className="rounded-xl border border-border bg-card overflow-hidden">
-          <SectionHeader id="atgi" icon={Clock} title="Auditoria ATGI — Gaps Temporais" subtitle={`${gapSummary.length} tipos de gap · ${inferencesATGI.length} inferências`} badge={formatCurrency(stats.totalGapImpact)} />
+          <SectionHeader id="atgi" icon={Clock} title="Auditoria ATGI — Gaps Temporais" subtitle={`${gapSummary.length} tipos de gap · ${inferencesATGI.length} inferências`} />
           {expandedSections.atgi && (
             <div className="px-5 pb-5">
               <table className="w-full text-xs">
@@ -403,10 +345,9 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
                   <tr className="border-b border-border">
                     <th className="text-left py-2 px-2 text-[9px] text-muted-foreground uppercase">Tipo</th>
                     <th className="text-left py-2 px-2 text-[9px] text-muted-foreground uppercase">Descrição</th>
-                    <th className="text-left py-2 px-2 text-[9px] text-muted-foreground uppercase">Base Regulatória</th>
+                    <th className="text-left py-2 px-2 text-[9px] text-muted-foreground uppercase">Base regulatória</th>
                     <th className="text-center py-2 px-2 text-[9px] text-muted-foreground uppercase">Severidade</th>
                     <th className="text-right py-2 px-2 text-[9px] text-muted-foreground uppercase">Ativos</th>
-                    <th className="text-right py-2 px-2 text-[9px] text-muted-foreground uppercase">Impacto</th>
                     <th className="text-right py-2 px-2 text-[9px] text-muted-foreground uppercase">Remediação</th>
                   </tr>
                 </thead>
@@ -415,7 +356,7 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
                     <tr key={g.tipo} className="border-b border-border/50 hover:bg-muted/10">
                       <td className="py-2 px-2 font-mono text-red-brand">{g.tipo}</td>
                       <td className="py-2 px-2">{g.desc}</td>
-                      <td className="py-2 px-2 text-[10px] font-mono text-muted-foreground">{g.regulatory_ref}</td>
+                      <td className="py-2 px-2 text-[10px] font-mono text-muted-foreground">Base regulatória: em consolidação</td>
                       <td className="py-2 px-2 text-center">
                         <span className={`text-[8px] font-mono px-1.5 py-0.5 rounded border ${
                           g.severity === 'critical' ? 'text-red-brand bg-red-brand/10 border-red-brand/20' :
@@ -424,18 +365,10 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
                         }`}>{g.severity.toUpperCase()}</span>
                       </td>
                       <td className="py-2 px-2 font-mono text-right">{g.ativos}</td>
-                      <td className="py-2 px-2 font-mono text-right text-red-brand">{formatCurrency(g.impacto)}</td>
                       <td className="py-2 px-2 text-[10px] text-right text-muted-foreground">{g.remediation_estimate}</td>
                     </tr>
                   ))}
                 </tbody>
-                <tfoot>
-                  <tr className="border-t-2 border-border">
-                    <td colSpan={5} className="py-2 px-2 font-semibold text-xs">Total Gaps ATGI</td>
-                    <td className="py-2 px-2 font-mono font-bold text-right text-red-brand">{formatCurrency(stats.totalGapImpact)}</td>
-                    <td />
-                  </tr>
-                </tfoot>
               </table>
             </div>
           )}
@@ -443,7 +376,7 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
 
         {/* 6. KPIs */}
         <motion.div {...anim} transition={{ delay: 0.25 }} className="rounded-xl border border-border bg-card overflow-hidden">
-          <SectionHeader id="kpis" icon={Shield} title="KPIs de Validação" subtitle="Holdout WP4 — Threshold de aprovação" badge={`${kpis.filter(k => k.met).length}/${kpis.length} atingidos`} />
+          <SectionHeader id="kpis" icon={Shield} title="Metas de KPI (a pactuar na Etapa 2)" subtitle="Valores ilustrativos com dados sintéticos" />
           {expandedSections.kpis && (
             <div className="px-5 pb-5">
               <div className="space-y-3">
@@ -452,18 +385,19 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
                     <span className="text-xs text-muted-foreground w-40 shrink-0">{kpi.label}</span>
                     <div className="flex-1 h-3 rounded-full bg-muted/30 overflow-hidden relative">
                       {kpi.value !== null && (
-                        <div className={`h-full rounded-full transition-all ${kpi.met ? 'bg-green-brand' : 'bg-amber-brand'}`}
+                        <div className="h-full rounded-full transition-all bg-amber-brand/70"
                           style={{ width: `${Math.min(kpi.value, 100)}%` }} />
                       )}
                       <div className="absolute top-0 h-full w-px bg-foreground/40" style={{ left: `${kpi.target}%` }} />
                     </div>
                     <span className="font-mono text-xs font-bold w-14 text-right">{kpi.value !== null ? `${kpi.value}%` : '—'}</span>
-                    <span className={`text-[9px] px-2 py-0.5 rounded font-mono ${
-                      kpi.met ? 'bg-green-brand/10 text-green-brand border border-green-brand/20' : 'bg-amber-brand/10 text-amber-brand border border-amber-brand/20'
-                    }`}>{kpi.met ? '✓ PASS' : '⏳'}</span>
+                    <span className="text-[9px] px-2 py-0.5 rounded font-mono bg-amber-brand/10 text-amber-brand border border-amber-brand/20">SIMULADO</span>
                   </div>
                 ))}
               </div>
+              <p className="text-[9px] text-muted-foreground mt-3">
+                Metas contratuais: cobertura ≥ 98%, precisão ≥ 92%, redução de tempo ≥ 60%.
+              </p>
             </div>
           )}
         </motion.div>

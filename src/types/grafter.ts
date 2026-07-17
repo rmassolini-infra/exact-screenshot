@@ -120,7 +120,7 @@ export interface RagMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
-  sources?: { doc_name: string; page: number }[];
+  sources?: { doc_name: string; page: number; confidence?: number }[];
   confidence?: number;
   needs_human_review?: boolean;
 }

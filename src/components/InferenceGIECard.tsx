@@ -62,28 +62,20 @@ const InferenceGIECard = ({ inference }: { inference: InferenceGIE }) => {
           <p className="text-muted-foreground leading-relaxed text-xs">{inference.finding}</p>
         </div>
 
-        {/* Impact + Sensitivity */}
-        <div className="p-3 rounded-lg bg-muted/30 space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">Impacto financeiro (cenário base):</span>
-            <span className={`font-mono font-bold ${inference.impact_value >= 0 ? 'text-green-brand' : 'text-red-brand'}`}>
-              {formatCurrency(inference.impact_value)}
-            </span>
-          </div>
-          {inference.sensitivity && (
-            <div className="flex gap-2">
-              {inference.sensitivity.map((s) => (
-                <div key={s.scenario} className="flex-1 text-center p-1.5 rounded bg-muted/30">
-                  <p className="text-[9px] text-muted-foreground capitalize">{s.scenario}</p>
-                  <p className={`text-[10px] font-mono ${s.value >= 0 ? 'text-green-brand' : 'text-red-brand'}`}>
-                    {formatCurrency(s.value)}
-                  </p>
-                  <p className="text-[9px] text-muted-foreground">{(s.probability * 100).toFixed(0)}%</p>
-                </div>
-              ))}
+        {/* Impacto: só aparece com valor constante em documento citado */}
+        {inference.impact_value !== 0 && inference.source_documents?.length > 0 && (
+          <div className="p-3 rounded-lg bg-muted/30">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">Valor constante do documento:</span>
+              <span className={`font-mono font-bold ${inference.impact_value >= 0 ? 'text-green-brand' : 'text-red-brand'}`}>
+                {formatCurrency(inference.impact_value)}
+              </span>
             </div>
-          )}
-        </div>
+            <p className="text-[9px] text-muted-foreground mt-1 font-mono">
+              Fonte: {inference.source_documents[0].doc_name}, p.{inference.source_documents[0].page}
+            </p>
+          </div>
+        )}
 
         {/* Recommendation */}
         <div>
