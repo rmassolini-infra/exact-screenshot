@@ -9,6 +9,12 @@ export interface Project {
   avg_risk: string;
   inference_count: number;
   created_at: string;
+  achados_count?: number;
+  gaps_count?: number;
+  cobertura_documental_pct?: number;
+  achados_severity?: { critical: number; major: number; minor: number };
+  gaps_by_type?: { tipo1: number; tipo2: number; tipo3: number; tipo4: number };
+  human_review_pending?: number;
 }
 
 export interface Asset {
