@@ -297,7 +297,7 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
                     <th className="text-left py-2 px-2 text-[9px] text-muted-foreground uppercase">ID</th>
                     <th className="text-left py-2 px-2 text-[9px] text-muted-foreground uppercase">Título</th>
                     <th className="text-center py-2 px-2 text-[9px] text-muted-foreground uppercase">Nível</th>
-                    <th className="text-right py-2 px-2 text-[9px] text-muted-foreground uppercase">Impacto</th>
+                    <th className="text-right py-2 px-2 text-[9px] text-muted-foreground uppercase">Valor citado</th>
                     <th className="text-right py-2 px-2 text-[9px] text-muted-foreground uppercase">Confiança</th>
                     <th className="text-center py-2 px-2 text-[9px] text-muted-foreground uppercase">Status</th>
                   </tr>
