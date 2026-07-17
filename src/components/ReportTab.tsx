@@ -406,7 +406,7 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
         <motion.div {...anim} transition={{ delay: 0.3 }} className="text-center py-4 space-y-2">
           <Separator />
           <p className="text-[10px] font-mono text-muted-foreground">
-            Grafter Asset OS · P&D ANEEL PROPDI/PROPEE · CONFIDENCIAL
+            Grafter DueDD · P&D ANEEL PROPDI/PROPEE · CONFIDENCIAL
           </p>
           <p className="text-[9px] text-muted-foreground">
             Gerado em {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')} · 

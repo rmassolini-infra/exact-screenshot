@@ -315,7 +315,7 @@ const OverviewTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, 
       {/* ── Footer ── */}
       <motion.div {...anim} transition={{ delay: 0.35 }} className="text-center">
         <p className="text-[8px] font-mono text-muted-foreground">
-          Grafter Asset OS · P&D ANEEL PROPDI/PROPEE · Demonstração sintética · CONFIDENCIAL
+          Grafter DueDD · P&D ANEEL PROPDI/PROPEE · Demonstração sintética · CONFIDENCIAL
         </p>
       </motion.div>
     </div>
