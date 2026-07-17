@@ -71,7 +71,7 @@ const ProjectPage = () => {
 
   const gapSummary = mockGapSummary;
 
-  const netImpactGIE = (inferencesGIE as any[]).reduce((s: number, inf: any) => s + (inf.impact_value ?? 0), 0);
+  
   if (!project) {
     return (
       <div className="max-w-7xl mx-auto text-center py-12">
