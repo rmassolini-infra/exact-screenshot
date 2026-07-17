@@ -330,14 +330,14 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
                     </tr>
                   ))}
                 </tbody>
-                <tfoot>
-                  <tr className="border-t-2 border-border">
-                    <td colSpan={3} className="py-2 px-2 font-semibold text-xs">Net Impact GIE</td>
-                    <td className="py-2 px-2 font-mono font-bold text-right text-red-brand">{formatCurrency(stats.netImpactGIE)}</td>
-                    <td colSpan={2} />
-                  </tr>
-                </tfoot>
               </table>
+            </div>
+          )}
+        </motion.div>
+
+        {/* 5. Gap Summary ATGI */}
+        <motion.div {...anim} transition={{ delay: 0.2 }} className="rounded-xl border border-border bg-card overflow-hidden">
+          <SectionHeader id="atgi" icon={Clock} title="Auditoria ATGI — Gaps Temporais" subtitle={`${gapSummary.length} tipos de gap · ${inferencesATGI.length} inferências`} />
             </div>
           )}
         </motion.div>
