@@ -323,8 +323,8 @@ const DashboardPage = () => {
               </thead>
               <tbody>
                 {filteredProjects.map((p: any, i: number) => {
-                  const delta = (p.seller_price ?? 0) - (p.passivo_total_ajustado ?? 0);
-                  const deltaPct = p.seller_price ? (delta / p.seller_price) * 100 : 0;
+                  const coverage = p.cobertura_documental_pct ?? 0;
+                  const coverageColor = coverage >= 80 ? 'text-green-brand' : coverage >= 60 ? 'text-amber-brand' : coverage > 0 ? 'text-red-brand' : 'text-muted-foreground';
                   return (
                     <motion.tr
                       key={p.id}
@@ -352,18 +352,29 @@ const DashboardPage = () => {
                         )}
                       </td>
                       <td className="px-4 py-3 text-center font-mono text-xs">{p.inference_count ?? '—'}</td>
-                      <td className="px-4 py-3 text-right font-mono text-xs">
-                        {p.seller_price ? formatCurrency(p.seller_price) : '—'}
-                      </td>
-                      <td className="px-4 py-3 text-right font-mono text-xs text-green-brand">
-                        {p.passivo_total_ajustado ? formatCurrency(p.passivo_total_ajustado) : '—'}
+                      <td className="px-4 py-3 text-right">
+                        {p.achados_count ? (
+                          <div className="flex flex-col items-end">
+                            <span className="font-mono text-xs text-red-brand">{p.achados_count}</span>
+                            <span className="font-mono text-[8px] text-muted-foreground">
+                              {p.achados_severity?.critical ?? 0}C · {p.achados_severity?.major ?? 0}M · {p.achados_severity?.minor ?? 0}m
+                            </span>
+                          </div>
+                        ) : <span className="text-[10px] text-muted-foreground">—</span>}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        {p.passivo_total_ajustado ? (
+                        {p.gaps_count ? (
                           <div className="flex flex-col items-end">
-                            <span className="font-mono text-[10px] text-green-brand">{formatCurrency(delta)}</span>
-                            <span className="font-mono text-[8px] text-muted-foreground">-{formatPercent(deltaPct)}</span>
+                            <span className="font-mono text-xs text-amber-brand">{p.gaps_count}</span>
+                            <span className="font-mono text-[8px] text-muted-foreground">
+                              T1·{p.gaps_by_type?.tipo1 ?? 0} T2·{p.gaps_by_type?.tipo2 ?? 0} T3·{p.gaps_by_type?.tipo3 ?? 0} T4·{p.gaps_by_type?.tipo4 ?? 0}
+                            </span>
                           </div>
+                        ) : <span className="text-[10px] text-muted-foreground">—</span>}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {coverage > 0 ? (
+                          <span className={`font-mono text-xs ${coverageColor}`}>{formatPercent(coverage)}</span>
                         ) : <span className="text-[10px] text-muted-foreground">—</span>}
                       </td>
                       <td className="px-4 py-3 text-muted-foreground font-mono text-[10px]">
