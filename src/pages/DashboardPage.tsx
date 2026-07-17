@@ -314,9 +314,9 @@ const DashboardPage = () => {
                   <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-center">Ativos</th>
                   <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-center">Risco</th>
                   <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-center">Inferências</th>
-                  <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-right">Preço Vendedor</th>
-                  <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-right">Preço Justo</th>
-                  <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-right">Proteção</th>
+                  <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-right">Achados</th>
+                  <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-right">Gaps</th>
+                  <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-right">Cobertura</th>
                   <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium">Criado</th>
                   <th className="px-4 py-2.5"></th>
                 </tr>
