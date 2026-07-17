@@ -343,7 +343,7 @@ const DashboardPage = () => {
       {/* Technical Footer */}
       <motion.div {...anim} transition={{ delay: 0.35 }} className="text-center">
         <p className="text-[8px] font-mono text-muted-foreground">
-          Grafter Asset OS · P&D ANEEL PROPDI/PROPEE · Pipeline: OCR Semântico → RAG Indexação → Motor de Valoração → GIE (8 Inf.) → ATGI (6 Inf.) · CONFIDENCIAL
+          Grafter Asset OS · P&D ANEEL PROPDI/PROPEE · Pipeline: M-01 OCR Semântico → M-02 RAG Indexação → M-04 Inferências GIE → M-05 Pipeline ATGI · CONFIDENCIAL
         </p>
       </motion.div>
     </div>
