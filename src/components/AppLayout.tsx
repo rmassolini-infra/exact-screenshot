@@ -28,7 +28,7 @@ const AppLayout = () => {
           <Shield className="w-6 h-6 text-cyan" />
           <span className="text-lg font-bold tracking-tight">
             <span className="text-foreground">Grafter</span>{' '}
-            <span className="text-cyan">Asset OS</span>
+            <span className="text-cyan">DueDD</span>
           </span>
           <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-muted text-muted-foreground border border-border">
             FASE 1 · BETA

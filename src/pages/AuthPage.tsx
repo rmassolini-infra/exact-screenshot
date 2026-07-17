@@ -63,7 +63,7 @@ const AuthPage = () => {
             <Shield className="w-8 h-8 text-cyan" />
             <h1 className="text-2xl font-bold tracking-tight">
               <span className="text-foreground">Grafter</span>{' '}
-              <span className="text-cyan">Asset OS</span>
+              <span className="text-cyan">DueDD</span>
             </h1>
           </div>
           <p className="text-muted-foreground text-sm">
