@@ -158,7 +158,7 @@ const OverviewTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, 
         {/* KPI Radar */}
         <div className="glass-panel p-4">
           <h3 className="text-[10px] text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
-            <Target className="w-3 h-3" /> Radar de Performance — KPIs vs Meta (Holdout WP4)
+            <Target className="w-3 h-3" /> Radar de Metas de KPI (a pactuar na Etapa 2)
           </h3>
           <ResponsiveContainer width="100%" height={260}>
             <RadarChart data={kpiRadarData} cx="50%" cy="50%" outerRadius="70%">
