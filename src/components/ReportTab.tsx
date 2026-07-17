@@ -338,13 +338,6 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
         {/* 5. Gap Summary ATGI */}
         <motion.div {...anim} transition={{ delay: 0.2 }} className="rounded-xl border border-border bg-card overflow-hidden">
           <SectionHeader id="atgi" icon={Clock} title="Auditoria ATGI — Gaps Temporais" subtitle={`${gapSummary.length} tipos de gap · ${inferencesATGI.length} inferências`} />
-            </div>
-          )}
-        </motion.div>
-
-        {/* 5. Gap Summary ATGI */}
-        <motion.div {...anim} transition={{ delay: 0.2 }} className="rounded-xl border border-border bg-card overflow-hidden">
-          <SectionHeader id="atgi" icon={Clock} title="Auditoria ATGI — Gaps Temporais" subtitle={`${gapSummary.length} tipos de gap · ${inferencesATGI.length} inferências`} badge={formatCurrency(stats.totalGapImpact)} />
           {expandedSections.atgi && (
             <div className="px-5 pb-5">
               <table className="w-full text-xs">
@@ -352,10 +345,9 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
                   <tr className="border-b border-border">
                     <th className="text-left py-2 px-2 text-[9px] text-muted-foreground uppercase">Tipo</th>
                     <th className="text-left py-2 px-2 text-[9px] text-muted-foreground uppercase">Descrição</th>
-                    <th className="text-left py-2 px-2 text-[9px] text-muted-foreground uppercase">Base Regulatória</th>
+                    <th className="text-left py-2 px-2 text-[9px] text-muted-foreground uppercase">Base regulatória</th>
                     <th className="text-center py-2 px-2 text-[9px] text-muted-foreground uppercase">Severidade</th>
                     <th className="text-right py-2 px-2 text-[9px] text-muted-foreground uppercase">Ativos</th>
-                    <th className="text-right py-2 px-2 text-[9px] text-muted-foreground uppercase">Impacto</th>
                     <th className="text-right py-2 px-2 text-[9px] text-muted-foreground uppercase">Remediação</th>
                   </tr>
                 </thead>
@@ -364,7 +356,7 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
                     <tr key={g.tipo} className="border-b border-border/50 hover:bg-muted/10">
                       <td className="py-2 px-2 font-mono text-red-brand">{g.tipo}</td>
                       <td className="py-2 px-2">{g.desc}</td>
-                      <td className="py-2 px-2 text-[10px] font-mono text-muted-foreground">{g.regulatory_ref}</td>
+                      <td className="py-2 px-2 text-[10px] font-mono text-muted-foreground">Base regulatória: em consolidação</td>
                       <td className="py-2 px-2 text-center">
                         <span className={`text-[8px] font-mono px-1.5 py-0.5 rounded border ${
                           g.severity === 'critical' ? 'text-red-brand bg-red-brand/10 border-red-brand/20' :
@@ -373,18 +365,10 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
                         }`}>{g.severity.toUpperCase()}</span>
                       </td>
                       <td className="py-2 px-2 font-mono text-right">{g.ativos}</td>
-                      <td className="py-2 px-2 font-mono text-right text-red-brand">{formatCurrency(g.impacto)}</td>
                       <td className="py-2 px-2 text-[10px] text-right text-muted-foreground">{g.remediation_estimate}</td>
                     </tr>
                   ))}
                 </tbody>
-                <tfoot>
-                  <tr className="border-t-2 border-border">
-                    <td colSpan={5} className="py-2 px-2 font-semibold text-xs">Total Gaps ATGI</td>
-                    <td className="py-2 px-2 font-mono font-bold text-right text-red-brand">{formatCurrency(stats.totalGapImpact)}</td>
-                    <td />
-                  </tr>
-                </tfoot>
               </table>
             </div>
           )}
