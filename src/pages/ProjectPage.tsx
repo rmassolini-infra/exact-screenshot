@@ -139,17 +139,11 @@ const ProjectPage = () => {
 
         {activeTab === 'gie' && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-cyan" /> Grafter Inference Engine
-                </h3>
-                <p className="text-sm text-muted-foreground">8 Inferências M&A Proativas · Sem acionamento manual</p>
-              </div>
-              <div className="text-right">
-                <p className="text-xs text-muted-foreground">Impacto financeiro total</p>
-                <p className="font-mono font-bold text-red-brand">{formatCurrency(netImpactGIE)}</p>
-              </div>
+            <div>
+              <h3 className="font-semibold flex items-center gap-2">
+                <Zap className="w-4 h-4 text-cyan" /> Grafter Inference Engine
+              </h3>
+              <p className="text-sm text-muted-foreground">5 inferências M&A · valores só quando constam de documento citado</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -157,40 +151,16 @@ const ProjectPage = () => {
                 <InferenceGIECard key={inf.id} inference={inf} />
               ))}
             </div>
-
-            <div className="glass-panel-primary p-4">
-              <h4 className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Impacto Consolidado GIE</h4>
-              <div className="space-y-2">
-                {(inferencesGIE as any[]).filter((i: any) => Math.abs(i.impact_value ?? 0) > 3000000).map((i: any) => (
-                  <div key={i.id} className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{i.inference_id} {i.title}</span>
-                    <span className={`font-mono ${(i.impact_value ?? 0) >= 0 ? 'text-green-brand' : 'text-red-brand'}`}>
-                      {formatCurrency(i.impact_value ?? 0)}
-                    </span>
-                  </div>
-                ))}
-                <div className="border-t border-border pt-2 flex justify-between font-semibold">
-                  <span>Net Impact GIE</span>
-                  <span className="font-mono text-red-brand">{formatCurrency(netImpactGIE)}</span>
-                </div>
-              </div>
-            </div>
           </div>
         )}
 
         {activeTab === 'atgi' && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-purple-brand" /> Asset Timeline & Gap Intelligence
-                </h3>
-                <p className="text-sm text-muted-foreground">6 Inferências Temporais · 4 Tipos de Gap · Base regulatória ANEEL</p>
-              </div>
-              <div className="text-right">
-                <p className="text-xs text-muted-foreground">Impacto total gaps</p>
-                <p className="font-mono font-bold text-red-brand">{formatCurrency(gapSummary.reduce((s, g) => s + g.impacto, 0))}</p>
-              </div>
+            <div>
+              <h3 className="font-semibold flex items-center gap-2">
+                <Clock className="w-4 h-4 text-purple-brand" /> Asset Timeline & Gap Intelligence
+              </h3>
+              <p className="text-sm text-muted-foreground">4 Tipos de Gap · Base regulatória: em consolidação</p>
             </div>
 
             {assets.length > 0 && (
@@ -208,10 +178,9 @@ const ProjectPage = () => {
                   <tr className="border-b border-border">
                     <th className="px-4 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium text-left">Tipo</th>
                     <th className="px-4 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium text-left">Descrição</th>
-                    <th className="px-4 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium text-left">Base Regulatória</th>
+                    <th className="px-4 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium text-left">Base regulatória</th>
                     <th className="px-4 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium text-center">Severidade</th>
                     <th className="px-4 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium text-right">Ativos</th>
-                    <th className="px-4 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium text-right">Impacto</th>
                     <th className="px-4 py-2.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium text-right">Remediação</th>
                   </tr>
                 </thead>
@@ -220,7 +189,7 @@ const ProjectPage = () => {
                     <tr key={g.tipo} className="border-b border-border/50">
                       <td className="px-4 py-2.5 font-mono text-red-brand text-xs">{g.tipo}</td>
                       <td className="px-4 py-2.5 text-xs">{g.desc}</td>
-                      <td className="px-4 py-2.5 text-[10px] font-mono text-muted-foreground">{g.regulatory_ref}</td>
+                      <td className="px-4 py-2.5 text-[10px] font-mono text-muted-foreground">Base regulatória: em consolidação</td>
                       <td className="px-4 py-2.5 text-center">
                         <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded border ${
                           g.severity === 'critical' ? 'text-red-brand bg-red-brand/10 border-red-brand/20' :
@@ -229,7 +198,6 @@ const ProjectPage = () => {
                         }`}>{g.severity.toUpperCase()}</span>
                       </td>
                       <td className="px-4 py-2.5 font-mono text-right text-xs">{g.ativos}</td>
-                      <td className="px-4 py-2.5 font-mono text-right text-red-brand text-xs">{formatCurrency(g.impacto)}</td>
                       <td className="px-4 py-2.5 text-[10px] text-right text-muted-foreground">{g.remediation_estimate}</td>
                     </tr>
                   ))}
