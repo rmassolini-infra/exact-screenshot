@@ -65,7 +65,6 @@ const ProjectPage = () => {
   const kpis = [
     { label: 'Precisão OCR', value: (project as any)?.kpi_ocr_precision ?? 97.3, target: 95, met: true },
     { label: 'Redução tempo DD', value: (project as any)?.kpi_dd_reduction ?? 68, target: 60, met: true },
-    { label: 'ROI estimado 24m', value: null, target: 150, met: false },
     { label: 'Acurácia GIE', value: (project as any)?.kpi_gie_accuracy ?? 87, target: 85, met: true },
     { label: 'Cobertura Timeline', value: (project as any)?.kpi_atgi_coverage ?? 82, target: 80, met: true },
   ];
