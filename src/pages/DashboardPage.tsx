@@ -13,14 +13,6 @@ import { useProjects, useGlobalStats } from '@/hooks/useProjectData';
 import { formatPercent, riskBadgeClass } from '@/lib/format';
 import { mockProjects } from '@/data/mockData';
 import { useState } from 'react';
-  PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid,
-} from 'recharts';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useProjects, useGlobalStats } from '@/hooks/useProjectData';
-import { formatCurrency, formatPercent, riskBadgeClass } from '@/lib/format';
-import { mockProjects } from '@/data/mockData';
-import { useState } from 'react';
 
 const statusConfig: Record<string, { label: string; class: string; color: string }> = {
   uploading: { label: 'UPLOAD', class: 'status-complete', color: 'hsl(214, 30%, 65%)' },
