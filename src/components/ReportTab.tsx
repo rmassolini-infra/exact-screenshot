@@ -288,7 +288,7 @@ const ReportTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, kp
 
         {/* 4. GIE Inferences */}
         <motion.div {...anim} transition={{ delay: 0.15 }} className="rounded-xl border border-border bg-card overflow-hidden">
-          <SectionHeader id="gie" icon={Zap} title="Inferências GIE — Grafter Inference Engine" subtitle={`${inferencesGIE.length} inferências M&A proativas`} badge={formatCurrency(stats.netImpactGIE)} />
+          <SectionHeader id="gie" icon={Zap} title="Inferências GIE — Grafter Inference Engine" subtitle={`${inferencesGIE.length} inferências`} />
           {expandedSections.gie && (
             <div className="px-5 pb-5">
               <table className="w-full text-xs">
