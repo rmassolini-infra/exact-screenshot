@@ -2,10 +2,17 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  FolderOpen, Box, Zap, DollarSign, Plus, ArrowRight, Shield, TrendingDown,
-  AlertTriangle, Activity, Clock, Search, Filter,
+  FolderOpen, Box, Zap, Plus, ArrowRight, AlertTriangle, Activity, Search, FileSearch, Users, FileCheck,
 } from 'lucide-react';
 import {
+  PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid,
+} from 'recharts';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useProjects, useGlobalStats } from '@/hooks/useProjectData';
+import { formatPercent, riskBadgeClass } from '@/lib/format';
+import { mockProjects } from '@/data/mockData';
+import { useState } from 'react';
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid,
 } from 'recharts';
 import { Button } from '@/components/ui/button';
