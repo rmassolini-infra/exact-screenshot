@@ -75,19 +75,7 @@ const OverviewTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, 
       risk: a.risk_score ?? 'LOW',
     })), [assets]);
 
-  // ── Passivo Waterfall ──
-  const passivoWaterfall = useMemo(() => {
-    if (!passivo) return [];
-    return [
-      { name: 'Preço Vendedor', value: passivo.seller_price, color: 'hsl(214, 30%, 65%)' },
-      { name: 'Gap Tipo 1', value: -passivo.ajuste_tipo1, color: 'hsl(355, 82%, 56%)' },
-      { name: 'Gap Tipo 2', value: -passivo.ajuste_tipo2, color: 'hsl(355, 82%, 56%)' },
-      { name: 'Gap Tipo 3', value: -passivo.ajuste_tipo3, color: 'hsl(355, 82%, 56%)' },
-      { name: 'Gap Tipo 4', value: -passivo.ajuste_tipo4, color: 'hsl(355, 82%, 56%)' },
-      { name: 'Passivo GIE', value: -passivo.passivo_oculto_gie, color: 'hsl(355, 82%, 66%)' },
-      { name: 'Passivo Reg.', value: -passivo.passivo_regulatorio, color: 'hsl(42, 100%, 51%)' },
-    ];
-  }, [passivo]);
+  // (removido: waterfall de passivo)
 
   return (
     <div className="space-y-6">
