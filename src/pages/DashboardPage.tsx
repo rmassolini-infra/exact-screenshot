@@ -2,8 +2,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  FolderOpen, Box, Zap, DollarSign, Plus, ArrowRight, Shield, TrendingDown,
-  AlertTriangle, Activity, Clock, Search, Filter,
+  FolderOpen, Box, Zap, Plus, ArrowRight, AlertTriangle, Activity, Search, FileSearch, Users, FileCheck,
 } from 'lucide-react';
 import {
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -11,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useProjects, useGlobalStats } from '@/hooks/useProjectData';
-import { formatCurrency, formatPercent, riskBadgeClass } from '@/lib/format';
+import { formatPercent, riskBadgeClass } from '@/lib/format';
 import { mockProjects } from '@/data/mockData';
 import { useState } from 'react';
 
@@ -68,10 +67,37 @@ const DashboardPage = () => {
   const totalProjectCount = (stats?.projectCount ?? 0) + mockProjects.length;
   const totalAssets = (stats?.assetCount ?? 0) + 893;
   const totalInferences = (stats?.inferenceCount ?? 0) + 34;
-  const totalPassivo = (stats?.passivoTotal ?? 0) + 246000000;
-  const totalSellerPrice = allProjects.reduce((s: number, p: any) => s + (p.seller_price ?? 0), 0);
-  const totalAdjusted = allProjects.reduce((s: number, p: any) => s + (p.passivo_total_ajustado ?? 0), 0);
-  const protectionPct = totalSellerPrice > 0 ? ((totalSellerPrice - totalAdjusted) / totalSellerPrice) * 100 : 0;
+
+  // Achados agregados por severidade
+  const achadosAgg = useMemo(() => {
+    const acc = { critical: 0, major: 0, minor: 0 };
+    allProjects.forEach((p: any) => {
+      acc.critical += p.achados_severity?.critical ?? 0;
+      acc.major += p.achados_severity?.major ?? 0;
+      acc.minor += p.achados_severity?.minor ?? 0;
+    });
+    return acc;
+  }, [allProjects]);
+  const totalAchados = achadosAgg.critical + achadosAgg.major + achadosAgg.minor;
+
+  // Gaps agregados por tipo
+  const gapsAgg = useMemo(() => {
+    const acc = { tipo1: 0, tipo2: 0, tipo3: 0, tipo4: 0 };
+    allProjects.forEach((p: any) => {
+      acc.tipo1 += p.gaps_by_type?.tipo1 ?? 0;
+      acc.tipo2 += p.gaps_by_type?.tipo2 ?? 0;
+      acc.tipo3 += p.gaps_by_type?.tipo3 ?? 0;
+      acc.tipo4 += p.gaps_by_type?.tipo4 ?? 0;
+    });
+    return acc;
+  }, [allProjects]);
+  const totalGaps = gapsAgg.tipo1 + gapsAgg.tipo2 + gapsAgg.tipo3 + gapsAgg.tipo4;
+
+  const totalReviewPending = allProjects.reduce((s: number, p: any) => s + (p.human_review_pending ?? 0), 0);
+  const projectsWithCoverage = allProjects.filter((p: any) => (p.cobertura_documental_pct ?? 0) > 0);
+  const avgCoverage = projectsWithCoverage.length > 0
+    ? projectsWithCoverage.reduce((s: number, p: any) => s + p.cobertura_documental_pct, 0) / projectsWithCoverage.length
+    : 0;
 
   // Charts data
   const statusDistribution = useMemo(() => {
@@ -92,16 +118,24 @@ const DashboardPage = () => {
     return Object.entries(counts).filter(([k, v]) => v > 0 && k !== '-').map(([name, value]) => ({ name, value }));
   }, [allProjects]);
 
-  const passivoByProject = useMemo(() =>
-    allProjects
-      .filter((p: any) => p.passivo_total_ajustado)
-      .map((p: any) => ({
-        name: p.name?.split(' ').slice(0, 2).join(' ') ?? 'Projeto',
-        seller: p.seller_price ?? 0,
-        adjusted: p.passivo_total_ajustado ?? 0,
-        delta: (p.seller_price ?? 0) - (p.passivo_total_ajustado ?? 0),
-      })),
-    [allProjects]);
+  const severityData = [
+    { name: 'Critical', value: achadosAgg.critical },
+    { name: 'Major', value: achadosAgg.major },
+    { name: 'Minor', value: achadosAgg.minor },
+  ].filter(d => d.value > 0);
+
+  const gapsData = [
+    { name: 'Tipo 1', value: gapsAgg.tipo1 },
+    { name: 'Tipo 2', value: gapsAgg.tipo2 },
+    { name: 'Tipo 3', value: gapsAgg.tipo3 },
+    { name: 'Tipo 4', value: gapsAgg.tipo4 },
+  ];
+
+  const SEV_COLORS: Record<string, string> = {
+    Critical: 'hsl(355, 82%, 56%)',
+    Major: 'hsl(42, 100%, 51%)',
+    Minor: 'hsl(193, 100%, 42%)',
+  };
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -111,9 +145,9 @@ const DashboardPage = () => {
           { icon: FolderOpen, label: 'Projetos', value: totalProjectCount, sub: `${allProjects.filter((p: any) => p.status === 'ready' || p.status === 'complete').length} finalizados`, color: 'text-cyan' },
           { icon: Box, label: 'Ativos', value: totalAssets.toLocaleString('pt-BR'), sub: 'Catalogados & valorados', color: 'text-cyan' },
           { icon: Zap, label: 'Inferências', value: totalInferences, sub: 'GIE + ATGI geradas', color: 'text-amber-brand' },
-          { icon: DollarSign, label: 'Preço Vendedor', value: formatCurrency(totalSellerPrice), sub: 'Base RAB declarada', color: 'text-foreground' },
-          { icon: TrendingDown, label: 'Passivo Identificado', value: formatCurrency(totalPassivo), sub: 'Ajustes + ocultos + regulatório', color: 'text-red-brand' },
-          { icon: Shield, label: 'Proteção', value: `${formatPercent(protectionPct)}`, sub: formatCurrency(totalSellerPrice - totalAdjusted), color: 'text-green-brand' },
+          { icon: AlertTriangle, label: 'Achados por Severidade', value: totalAchados, sub: `${achadosAgg.critical} crít · ${achadosAgg.major} maj · ${achadosAgg.minor} min`, color: 'text-red-brand' },
+          { icon: FileSearch, label: 'Gaps por Tipo', value: totalGaps, sub: `T1 ${gapsAgg.tipo1} · T2 ${gapsAgg.tipo2} · T3 ${gapsAgg.tipo3} · T4 ${gapsAgg.tipo4}`, color: 'text-amber-brand' },
+          { icon: Users, label: 'Revisão Humana Pendente', value: totalReviewPending, sub: 'Achados aguardando validação', color: 'text-foreground' },
         ].map((m, i) => (
           <motion.div key={m.label} {...anim} transition={{ delay: i * 0.05 }} className="glass-panel p-4">
             <div className="flex items-center gap-1.5 mb-2">
@@ -125,6 +159,23 @@ const DashboardPage = () => {
           </motion.div>
         ))}
       </div>
+
+      {/* Cobertura Documental Média — card destaque */}
+      <motion.div {...anim} transition={{ delay: 0.1 }} className="glass-panel p-4">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-1.5">
+            <FileCheck className="w-3.5 h-3.5 text-green-brand" />
+            <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Cobertura Documental Média do Portfólio</span>
+          </div>
+          <span className="font-mono text-sm font-bold text-green-brand">{formatPercent(avgCoverage)}</span>
+        </div>
+        <div className="w-full h-2 rounded-full bg-muted/30 overflow-hidden">
+          <div className="h-full bg-green-brand transition-all" style={{ width: `${Math.min(avgCoverage, 100)}%` }} />
+        </div>
+        <p className="text-[9px] text-muted-foreground mt-1.5">
+          Média ponderada de cobertura documental (MCPSE Módulo 1) sobre {projectsWithCoverage.length} projetos com ingestão concluída.
+        </p>
+      </motion.div>
 
       {/* Charts Row */}
       <motion.div {...anim} transition={{ delay: 0.15 }} className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -162,16 +213,16 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        {/* Risk Portfolio */}
+        {/* Achados por Severidade */}
         <div className="glass-panel p-4">
           <h3 className="text-[10px] text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
-            <AlertTriangle className="w-3 h-3" /> Risco Médio do Portfólio
+            <AlertTriangle className="w-3 h-3" /> Achados por Severidade
           </h3>
           <ResponsiveContainer width="100%" height={180}>
             <PieChart>
-              <Pie data={riskDistribution} cx="50%" cy="50%" innerRadius={40} outerRadius={65} paddingAngle={3} dataKey="value" stroke="none">
-                {riskDistribution.map((entry, i) => (
-                  <Cell key={i} fill={RISK_COLORS[entry.name] ?? RISK_COLORS.LOW} />
+              <Pie data={severityData} cx="50%" cy="50%" innerRadius={40} outerRadius={65} paddingAngle={3} dataKey="value" stroke="none">
+                {severityData.map((entry, i) => (
+                  <Cell key={i} fill={SEV_COLORS[entry.name]} />
                 ))}
               </Pie>
               <Tooltip content={({ active, payload }: any) => {
@@ -179,53 +230,50 @@ const DashboardPage = () => {
                 return (
                   <div className="rounded-lg border border-border bg-popover px-3 py-2 text-xs shadow-md">
                     <p className="font-medium text-foreground">{payload[0].name}</p>
-                    <p className="text-muted-foreground">{payload[0].value} projetos</p>
+                    <p className="text-muted-foreground">{payload[0].value} achados</p>
                   </div>
                 );
               }} />
             </PieChart>
           </ResponsiveContainer>
           <div className="flex flex-wrap gap-2 justify-center">
-            {riskDistribution.map(r => (
-              <span key={r.name} className="flex items-center gap-1 text-[9px]">
-                <span className="w-2 h-2 rounded-full" style={{ background: RISK_COLORS[r.name] }} />
-                <span className="text-muted-foreground">{r.name} ({r.value})</span>
+            {severityData.map(s => (
+              <span key={s.name} className="flex items-center gap-1 text-[9px]">
+                <span className="w-2 h-2 rounded-full" style={{ background: SEV_COLORS[s.name] }} />
+                <span className="text-muted-foreground">{s.name} ({s.value})</span>
               </span>
             ))}
           </div>
         </div>
 
-        {/* Passivo Comparison */}
+        {/* Gaps por Tipo */}
         <div className="glass-panel p-4">
           <h3 className="text-[10px] text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
-            <DollarSign className="w-3 h-3" /> Preço Vendedor vs. Preço Justo
+            <FileSearch className="w-3 h-3" /> Gaps por Tipo (ATGI)
           </h3>
           <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={passivoByProject} margin={{ top: 5, right: 5, left: -15, bottom: 5 }}>
+            <BarChart data={gapsData} margin={{ top: 5, right: 5, left: -15, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 40%, 22%)" />
-              <XAxis dataKey="name" tick={{ fill: 'hsl(214, 30%, 65%)', fontSize: 8 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: 'hsl(214, 30%, 65%)', fontSize: 8 }} axisLine={false} tickLine={false}
-                tickFormatter={(v: number) => `${(v / 1_000_000_000).toFixed(1)}B`} />
+              <XAxis dataKey="name" tick={{ fill: 'hsl(214, 30%, 65%)', fontSize: 9 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: 'hsl(214, 30%, 65%)', fontSize: 8 }} axisLine={false} tickLine={false} allowDecimals={false} />
               <Tooltip content={({ active, payload, label }: any) => {
                 if (!active || !payload?.length) return null;
                 return (
                   <div className="rounded-lg border border-border bg-popover px-3 py-2 text-xs shadow-md">
                     <p className="font-medium text-foreground mb-1">{label}</p>
-                    <p className="text-muted-foreground">Vendedor: <span className="font-mono text-foreground">{formatCurrency(payload[0]?.value ?? 0)}</span></p>
-                    <p className="text-muted-foreground">Justo: <span className="font-mono text-green-brand">{formatCurrency(payload[1]?.value ?? 0)}</span></p>
+                    <p className="text-muted-foreground">Gaps: <span className="font-mono text-foreground">{payload[0]?.value ?? 0}</span></p>
                   </div>
                 );
               }} />
-              <Bar dataKey="seller" fill="hsl(214, 30%, 65%)" fillOpacity={0.4} radius={[4, 4, 0, 0]} maxBarSize={28} name="Vendedor" />
-              <Bar dataKey="adjusted" fill="hsl(160, 100%, 39%)" fillOpacity={0.8} radius={[4, 4, 0, 0]} maxBarSize={28} name="Justo" />
+              <Bar dataKey="value" fill="hsl(42, 100%, 51%)" fillOpacity={0.85} radius={[4, 4, 0, 0]} maxBarSize={40} />
             </BarChart>
           </ResponsiveContainer>
-          <div className="flex gap-4 justify-center mt-1 text-[8px] text-muted-foreground">
-            <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm bg-muted-foreground/40 inline-block" /> Preço vendedor</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm bg-green-brand inline-block" /> Preço justo</span>
-          </div>
+          <p className="text-[8px] text-muted-foreground text-center mt-1">
+            T1 Especificação · T2 Manutenção · T3 Regulatório · T4 Contábil-real
+          </p>
         </div>
       </motion.div>
+
 
       {/* Projects Header */}
       <motion.div {...anim} transition={{ delay: 0.2 }} className="flex items-center justify-between flex-wrap gap-3">
@@ -266,17 +314,17 @@ const DashboardPage = () => {
                   <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-center">Ativos</th>
                   <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-center">Risco</th>
                   <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-center">Inferências</th>
-                  <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-right">Preço Vendedor</th>
-                  <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-right">Preço Justo</th>
-                  <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-right">Proteção</th>
+                  <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-right">Achados</th>
+                  <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-right">Gaps</th>
+                  <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium text-right">Cobertura</th>
                   <th className="px-4 py-2.5 text-[9px] text-muted-foreground uppercase tracking-wider font-medium">Criado</th>
                   <th className="px-4 py-2.5"></th>
                 </tr>
               </thead>
               <tbody>
                 {filteredProjects.map((p: any, i: number) => {
-                  const delta = (p.seller_price ?? 0) - (p.passivo_total_ajustado ?? 0);
-                  const deltaPct = p.seller_price ? (delta / p.seller_price) * 100 : 0;
+                  const coverage = p.cobertura_documental_pct ?? 0;
+                  const coverageColor = coverage >= 80 ? 'text-green-brand' : coverage >= 60 ? 'text-amber-brand' : coverage > 0 ? 'text-red-brand' : 'text-muted-foreground';
                   return (
                     <motion.tr
                       key={p.id}
@@ -304,18 +352,29 @@ const DashboardPage = () => {
                         )}
                       </td>
                       <td className="px-4 py-3 text-center font-mono text-xs">{p.inference_count ?? '—'}</td>
-                      <td className="px-4 py-3 text-right font-mono text-xs">
-                        {p.seller_price ? formatCurrency(p.seller_price) : '—'}
-                      </td>
-                      <td className="px-4 py-3 text-right font-mono text-xs text-green-brand">
-                        {p.passivo_total_ajustado ? formatCurrency(p.passivo_total_ajustado) : '—'}
+                      <td className="px-4 py-3 text-right">
+                        {p.achados_count ? (
+                          <div className="flex flex-col items-end">
+                            <span className="font-mono text-xs text-red-brand">{p.achados_count}</span>
+                            <span className="font-mono text-[8px] text-muted-foreground">
+                              {p.achados_severity?.critical ?? 0}C · {p.achados_severity?.major ?? 0}M · {p.achados_severity?.minor ?? 0}m
+                            </span>
+                          </div>
+                        ) : <span className="text-[10px] text-muted-foreground">—</span>}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        {p.passivo_total_ajustado ? (
+                        {p.gaps_count ? (
                           <div className="flex flex-col items-end">
-                            <span className="font-mono text-[10px] text-green-brand">{formatCurrency(delta)}</span>
-                            <span className="font-mono text-[8px] text-muted-foreground">-{formatPercent(deltaPct)}</span>
+                            <span className="font-mono text-xs text-amber-brand">{p.gaps_count}</span>
+                            <span className="font-mono text-[8px] text-muted-foreground">
+                              T1·{p.gaps_by_type?.tipo1 ?? 0} T2·{p.gaps_by_type?.tipo2 ?? 0} T3·{p.gaps_by_type?.tipo3 ?? 0} T4·{p.gaps_by_type?.tipo4 ?? 0}
+                            </span>
                           </div>
+                        ) : <span className="text-[10px] text-muted-foreground">—</span>}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {coverage > 0 ? (
+                          <span className={`font-mono text-xs ${coverageColor}`}>{formatPercent(coverage)}</span>
                         ) : <span className="text-[10px] text-muted-foreground">—</span>}
                       </td>
                       <td className="px-4 py-3 text-muted-foreground font-mono text-[10px]">
