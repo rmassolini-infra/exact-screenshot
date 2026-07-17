@@ -187,7 +187,7 @@ const OverviewTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, 
         {/* KPI Progress Bars */}
         <div className="glass-panel p-4">
           <h3 className="text-[10px] text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-1.5">
-            <Shield className="w-3 h-3" /> KPIs em Tempo Real — Validação Holdout WP4
+            <Shield className="w-3 h-3" /> Metas de KPI (a pactuar na Etapa 2)
           </h3>
           <div className="space-y-4">
             {kpis.map((kpi) => (
@@ -196,17 +196,16 @@ const OverviewTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, 
                   <span className="text-xs text-muted-foreground">{kpi.label}</span>
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-xs font-bold">{kpi.value !== null ? `${kpi.value}%` : '—'}</span>
-                    <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono ${
-                      kpi.met ? 'bg-green-brand/10 text-green-brand border border-green-brand/20' : 'bg-amber-brand/10 text-amber-brand border border-amber-brand/20'
-                    }`}>{kpi.met ? '✓ PASS' : '⏳ PENDING'}</span>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded font-mono bg-amber-brand/10 text-amber-brand border border-amber-brand/20">
+                      SIMULADO
+                    </span>
                   </div>
                 </div>
                 <div className="relative h-3 rounded-full bg-muted/30 overflow-hidden">
                   {kpi.value !== null && (
-                    <div className={`h-full rounded-full transition-all ${kpi.met ? 'bg-green-brand' : 'bg-amber-brand'}`}
+                    <div className="h-full rounded-full transition-all bg-amber-brand/70"
                       style={{ width: `${Math.min(kpi.value, 100)}%` }} />
                   )}
-                  {/* Target marker */}
                   <div className="absolute top-0 h-full w-px bg-foreground/40" style={{ left: `${kpi.target}%` }}>
                     <span className="absolute -top-4 -translate-x-1/2 text-[7px] font-mono text-muted-foreground">≥{kpi.target}%</span>
                   </div>
@@ -214,8 +213,8 @@ const OverviewTab = ({ project, assets, inferencesGIE, inferencesATGI, passivo, 
               </div>
             ))}
           </div>
-          <p className="text-[8px] text-muted-foreground font-mono mt-4">
-            Validação: holdout 20% (WP4) · Threshold: MAE {'<'} 5% · MAPE {'<'} 8% · AUC-ROC {'>'} 0.85
+          <p className="text-[9px] text-muted-foreground mt-4 leading-relaxed">
+            Valores ilustrativos com dados sintéticos. Metas contratuais: cobertura ≥ 98%, precisão ≥ 92%, redução de tempo ≥ 60%.
           </p>
         </div>
       </motion.div>
