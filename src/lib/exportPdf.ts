@@ -173,7 +173,7 @@ export function exportPdf(data: ExportData) {
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
     doc.text(
-      `Grafter Asset OS · P&D ANEEL PROPDI/PROPEE · CONFIDENCIAL · Página ${i}/${totalPages}`,
+      `Grafter DueDD · P&D ANEEL PROPDI/PROPEE · CONFIDENCIAL · Página ${i}/${totalPages}`,
       pageW / 2,
       doc.internal.pageSize.getHeight() - 8,
       { align: 'center' }
