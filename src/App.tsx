@@ -10,6 +10,7 @@ import NewProjectPage from "./pages/NewProjectPage";
 import ProjectPage from "./pages/ProjectPage";
 import AppLayout from "./components/AppLayout";
 import NotFound from "./pages/NotFound";
+import AmbientalPage from "./pages/AmbientalPage";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/projects/new" element={<NewProjectPage />} />
               <Route path="/projects/:id" element={<ProjectPage />} />
+              <Route path="/ambiental" element={<AmbientalPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
