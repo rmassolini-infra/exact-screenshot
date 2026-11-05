@@ -84,6 +84,8 @@ export function fingerprint(sha: string, fields: Fields, deps: string[]): string
 }
 
 export function reviewValid(r: Review, sha: string, fields: Fields, checks: CheckResult[]) {
+  // Proveniência obrigatória: registro legado (sem docSha/depsSnapshot) nunca é vigente.
+  if (!r.docSha || !r.depsSnapshot || r.docSha !== sha) return false;
   const c = checks.find((x) => x.id === r.checkId);
   return !!c && r.fingerprint === fingerprint(sha, fields, c.dependencies);
 }

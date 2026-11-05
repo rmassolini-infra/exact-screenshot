@@ -56,7 +56,10 @@ const AmbientalPage = () => {
   const mountedRef = useRef(true);
   const saveSeq = useRef(0);
 
-  useEffect(() => () => { mountedRef.current = false; opRef.current?.ac.abort(); opRef.current?.destroy?.(); }, []);
+  useEffect(() => {
+    mountedRef.current = true; // StrictMode: restaura após cleanup/remount
+    return () => { mountedRef.current = false; opRef.current?.ac.abort(); opRef.current?.destroy?.(); };
+  }, []);
 
   /** Uma operação única (download → leitura → extração) com token próprio. */
   const runLoad = useCallback(async (req: LoadReq) => {
@@ -117,8 +120,8 @@ const AmbientalPage = () => {
         const s = await loadState();
         if (off || !s) return;
         setMode(s.mode); setReviews(s.reviews ?? []); setSel(s.source);
-        if (s.source === 'BR01') runLoad({ type: 'BR01' });
-        else if (s.bytes) runLoad({ type: 'upload', bytes: new Uint8Array(s.bytes), name: s.fileName });
+        if (s.source === 'BR01') await runLoad({ type: 'BR01' });
+        else if (s.bytes) await runLoad({ type: 'upload', bytes: new Uint8Array(s.bytes), name: s.fileName });
       } catch (e) {
         if (!off) setSave({ status: 'error', error: `Não foi possível ler o trabalho salvo: ${storageErrorMessage(e)}` });
       } finally { if (!off) setHydrated(true); }
@@ -202,7 +205,7 @@ const AmbientalPage = () => {
         <div className="flex flex-col lg:flex-row gap-3 lg:items-end">
           <div className="flex-1 space-y-1.5 min-w-0">
             <Label htmlFor="fonte">Documento</Label>
-            <select id="fonte" value={sel} onChange={(e) => setSel(e.target.value as any)} className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm">
+            <select id="fonte" disabled={!hydrated} value={sel} onChange={(e) => setSel(e.target.value as any)} className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm">
               <option value="BR01">Caso público BR01 — Capelinha</option>
               <option value="upload">Carregar PDF próprio</option>
             </select>
@@ -210,17 +213,17 @@ const AmbientalPage = () => {
           {sel === 'upload' && (
             <div className="flex-1 space-y-1.5 min-w-0">
               <Label htmlFor="arquivo">Arquivo PDF (até 25 MB)</Label>
-              <Input id="arquivo" type="file" accept="application/pdf,.pdf" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+              <Input id="arquivo" disabled={!hydrated} type="file" accept="application/pdf,.pdf" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
             </div>
           )}
           <div className="flex flex-wrap gap-2">
             {status === 'loading' ? (
               <Button variant="outline" onClick={cancel}><XCircle className="w-4 h-4 mr-1" />Cancelar</Button>
             ) : (
-              <Button onClick={requestLoad}>{sel === 'BR01' ? <FileText className="w-4 h-4 mr-1" /> : <Upload className="w-4 h-4 mr-1" />}Carregar caso</Button>
+              <Button disabled={!hydrated} onClick={requestLoad}>{sel === 'BR01' ? <FileText className="w-4 h-4 mr-1" /> : <Upload className="w-4 h-4 mr-1" />}Carregar caso</Button>
             )}
-            <Button variant="outline" disabled={!doc || status === 'loading'} onClick={() => doc && runLoad(doc.source === 'BR01' ? { type: 'BR01' } : { type: 'upload', bytes: doc.bytes, name: doc.name })}><RefreshCw className="w-4 h-4 mr-1" />Reprocessar</Button>
-            <Button variant="outline" disabled={status === 'loading' || (!doc && !reviews.length)} onClick={() => setConfirmClear(true)}><Trash2 className="w-4 h-4 mr-1" />Limpar / novo documento</Button>
+            <Button variant="outline" disabled={!hydrated || !doc || status === 'loading'} onClick={() => doc && runLoad(doc.source === 'BR01' ? { type: 'BR01' } : { type: 'upload', bytes: doc.bytes, name: doc.name })}><RefreshCw className="w-4 h-4 mr-1" />Reprocessar</Button>
+            <Button variant="outline" disabled={!hydrated || status === 'loading' || (!doc && !reviews.length)} onClick={() => setConfirmClear(true)}><Trash2 className="w-4 h-4 mr-1" />Limpar / novo documento</Button>
           </div>
         </div>
 
@@ -238,6 +241,7 @@ const AmbientalPage = () => {
           <span className="text-muted-foreground basis-full">Arquivos próprios não são enviados a servidor nem ficam públicos; não há colaboração em nuvem.</span>
         </div>
 
+        {!hydrated && <div className="text-sm text-muted-foreground">Restaurando trabalho salvo neste navegador…</div>}
         {status === 'loading' && <div className="text-sm text-cyan flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" />{progress || 'Processando…'}</div>}
         {status === 'cancelled' && <div role="alert" className="text-sm text-amber-brand border border-amber-brand/40 bg-amber-brand/10 rounded p-3">Processamento cancelado. {doc ? 'O documento anterior continua carregado.' : 'Nenhum documento carregado.'}</div>}
         {status === 'error' && <div role="alert" className="text-sm text-destructive border border-destructive/40 bg-destructive/10 rounded p-3">{error}{doc ? ' O documento anterior continua carregado.' : ''}</div>}
