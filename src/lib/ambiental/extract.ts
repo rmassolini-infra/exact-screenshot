@@ -104,9 +104,9 @@ export const SPECS: Spec[] = [
   txt('cedro_madeira', 'Madeira de cedro australiano (isoladas exóticas)', 'sendo N ?(m[²³]) de madeira e'),
   txt('exoticas_declaradas', 'Árvores isoladas exóticas declaradas', 'Deste total, N árvores isoladas são exóticas', 'indivíduos'),
   txt('cedro_individuos', 'Indivíduos de cedro australiano', 'árvore exótica \\(N indivíduos de cedro australiano', 'indivíduos'),
-  txt('eucalipto_individuos', 'Indivíduos de eucalipto', '\\(Toona ciliata\\), N indivíduos de eucalipto', 'indivíduos'),
-  txt('manga_individuos', 'Indivíduos de manga', '\\(Eucalyptus sp\\.\\), N indivíduos de manga', 'indivíduos'),
-  txt('mogno_individuos', 'Indivíduos de mogno africano', '\\(Mangifera indica\\) e N indivíduos de mogno', 'indivíduos'),
+  txt('eucalipto_individuos', 'Indivíduos de eucalipto', '\\( ?Toona ciliata ?\\), N indivíduos de eucalipto', 'indivíduos'),
+  txt('manga_individuos', 'Indivíduos de manga', '\\( ?Eucalyptus sp\\. ?\\), N indivíduos de manga', 'indivíduos'),
+  txt('mogno_individuos', 'Indivíduos de mogno africano', '\\( ?Mangifera indica ?\\) e N indivíduos de mogno', 'indivíduos'),
 ];
 
 export const FIELD_LABELS: Record<string, string> = Object.fromEntries(SPECS.map((s) => [s.key, s.label]));
