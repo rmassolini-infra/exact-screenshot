@@ -139,6 +139,17 @@ const DashboardPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
+      <button
+        onClick={() => navigate('/ambiental')}
+        className="w-full text-left glass-panel-cyan p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-primary transition-colors"
+      >
+        <div>
+          <div className="text-[10px] font-mono uppercase tracking-wider text-cyan">Novo módulo · Desafio 9 Cemig</div>
+          <div className="text-base font-semibold text-foreground">DueDD Ambiental — conferência de parecer técnico (caso público BR01 · Capelinha)</div>
+          <div className="text-xs text-muted-foreground">Documento → campos com evidência → conferências → revisão → minuta exportável</div>
+        </div>
+        <span className="text-sm font-medium text-cyan whitespace-nowrap">Abrir DueDD Ambiental →</span>
+      </button>
       {/* Executive KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-3">
         {[

@@ -1,11 +1,12 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Shield, LayoutDashboard, LogOut } from 'lucide-react';
+import { Shield, LayoutDashboard, LogOut, Leaf } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 const AppLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const isAmbiental = location.pathname.startsWith('/ambiental');
 
   const handleSignOut = async () => {
     await signOut();
@@ -15,13 +16,23 @@ const AppLayout = () => {
   return (
     <div className="min-h-screen bg-background dot-grid flex flex-col">
       {/* Selo de demonstração global — não fechável */}
-      <div
-        role="status"
-        aria-label="Selo de ambiente de demonstração"
-        className="w-full bg-amber-brand text-black text-[11px] font-mono font-semibold tracking-wider text-center py-1.5 px-3 border-b border-amber-brand/60 sticky top-0 z-[60]"
-      >
-        AMBIENTE DE DEMONSTRAÇÃO · DADOS 100% SINTÉTICOS · VISÃO DE PRODUTO (META M12)
-      </div>
+      {isAmbiental ? (
+        <div
+          role="status"
+          aria-label="Selo do caso público"
+          className="w-full bg-primary text-primary-foreground text-[11px] font-mono font-semibold tracking-wider text-center py-1.5 px-3 border-b border-primary/60 sticky top-0 z-[60]"
+        >
+          CASO PÚBLICO · REVISÃO TÉCNICA PENDENTE
+        </div>
+      ) : (
+        <div
+          role="status"
+          aria-label="Selo de ambiente de demonstração"
+          className="w-full bg-amber-brand text-black text-[11px] font-mono font-semibold tracking-wider text-center py-1.5 px-3 border-b border-amber-brand/60 sticky top-0 z-[60]"
+        >
+          AMBIENTE DE DEMONSTRAÇÃO · DADOS 100% SINTÉTICOS · VISÃO DE PRODUTO (META M12)
+        </div>
+      )}
 
       <header className="h-14 border-b border-border bg-background/80 backdrop-blur-md flex items-center justify-between px-6 sticky top-[26px] z-50">
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/dashboard')}>
@@ -45,7 +56,16 @@ const AppLayout = () => {
             }`}
           >
             <LayoutDashboard className="w-4 h-4" />
-            Dashboard
+            <span className="hidden sm:inline">Dashboard</span>
+          </button>
+          <button
+            onClick={() => navigate('/ambiental')}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-all ${
+              isAmbiental ? 'text-foreground bg-muted' : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Leaf className="w-4 h-4" />
+            Ambiental
           </button>
           <div className="w-px h-6 bg-border" />
           <span className="text-xs text-muted-foreground font-mono hidden sm:inline">{user?.email}</span>
@@ -68,7 +88,7 @@ const AppLayout = () => {
 
       {/* Marca d'água discreta de rodapé em todas as telas */}
       <footer className="text-center py-3 text-[10px] font-mono text-muted-foreground/70 border-t border-border/40">
-        Grafter DueDD · demo sintética
+        {isAmbiental ? 'Grafter DueDD Ambiental · caso público · conferência documental, não licenciamento' : 'Grafter DueDD · demo sintética'}
       </footer>
     </div>
   );
