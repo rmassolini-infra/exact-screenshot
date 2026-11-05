@@ -10,6 +10,7 @@ export interface MinutaInput {
   sha256: string;
   numPages: number;
   mode: 'p3' | 'full';
+  isBR01: boolean;
   fields: Record<string, ExtractedField>;
   checks: CheckResult[];
   sections: Record<string, string>;
@@ -18,19 +19,24 @@ export interface MinutaInput {
 }
 
 const STATUS = { consistente: 'Consistente', revisao: 'Revisão necessária', nao_avaliavel: 'Não avaliável' } as const;
-const modeLabel = (m: string) => (m === 'p3' ? 'Somente quadro da p. 3' : 'Quadro + narrativa da p. 7 (incorporação de trechos do mesmo parecer)');
+export const modeLabel = (m: string, isBR01: boolean) => (!isBR01 ? 'Documento completo' : m === 'p3' ? 'Somente quadro da p. 3' : 'Quadro + narrativa da p. 7 (incorporação de trechos do mesmo parecer)');
+export const sourceLabel = (isBR01: boolean) => (isBR01 ? 'Caso público BR01' : 'Documento do usuário');
 const fmt = (v: string) => Dec.parse(v).toBR(Math.min(4, (v.split('.')[1] ?? '').length));
 
 export const DISCLAIMER = 'Minuta de conferência documental gerada por regras determinísticas. Não constitui aprovação, assinatura técnica, PIA nem licença/autorização ambiental. Nenhuma revisão técnica formal foi registrada por responsável habilitado.';
 
 function reviewRows(m: MinutaInput) {
-  return m.reviews.map((r) => ({ ...r, valid: reviewValid(r, m.sha256, m.fields, m.checks) }));
+  return m.reviews.map((r) => ({
+    ...r,
+    valid: reviewValid(r, m.sha256, m.fields, m.checks),
+    fonte: !r.docSha ? 'fonte não registrada' : r.docSha === m.sha256 ? 'documento atual' : `outro documento: ${r.docName ?? '?'} (${r.docSha.slice(0, 12)}…)`,
+  }));
 }
 
 export function buildMarkdown(m: MinutaInput): string {
   const L: string[] = [];
   L.push(`# Minuta de conferência — ${m.caseLabel}`, '', `> ${DISCLAIMER}`, '');
-  L.push(`- Documento: ${m.docName}`, `- SHA-256: \`${m.sha256}\``, `- Páginas: ${m.numPages}`, `- Recorte: ${modeLabel(m.mode)}`, `- Gerado em: ${m.generatedAt}`, '');
+  L.push(`- Documento: ${m.docName}`, `- SHA-256: \`${m.sha256}\``, `- Páginas: ${m.numPages}`, `- Recorte: ${modeLabel(m.mode, m.isBR01)}`, `- Gerado em: ${m.generatedAt}`, '');
   L.push('## Campos extraídos', '', '| Campo | Valor original | Normalizado | Unidade (fonte) | Página |', '|---|---|---|---|---|');
   for (const f of Object.values(m.fields)) L.push(`| ${f.label} | ${f.raw} | ${f.value} | ${f.unit} | ${f.page} |`);
   L.push('');
@@ -45,7 +51,7 @@ export function buildMarkdown(m: MinutaInput): string {
       L.push(m.sections[k], '', '### Revisões locais registradas', '');
       const rr = reviewRows(m);
       if (!rr.length) L.push('Nenhuma revisão registrada.');
-      rr.forEach((r) => L.push(`- ${r.checkId} · ${r.kind === 'conferido' ? 'Conferido' : 'Observação'} · ${r.reviewer} · ${r.date.slice(0, 10)} · ${r.valid ? 'vigente' : 'INVALIDADA (entrada/documento mudou)'} — ${r.note}`));
+      rr.forEach((r) => L.push(`- ${r.checkId} · ${r.kind === 'conferido' ? 'Conferido' : 'Observação'} · ${r.reviewer} · ${r.date.slice(0, 10)} · ${r.fonte} · ${r.valid ? 'vigente' : 'INVALIDADA (entrada/documento mudou)'} — ${r.note}`));
     } else L.push(m.sections[k]);
     L.push('');
   }
@@ -55,7 +61,7 @@ export function buildMarkdown(m: MinutaInput): string {
 export function buildJson(m: MinutaInput) {
   return {
     escopo: 'Conferência documental — não é PIA completo, licença ou aprovação.',
-    caso: m.caseLabel, documento: m.docName, sha256: m.sha256, paginas: m.numPages, recorte: m.mode, gerado_em: m.generatedAt,
+    caso: m.caseLabel, fonte: sourceLabel(m.isBR01), recorte_descricao: modeLabel(m.mode, m.isBR01), documento: m.docName, sha256: m.sha256, paginas: m.numPages, recorte: m.mode, gerado_em: m.generatedAt,
     aprovacao_automatica: false, aprovacao_responsavel: null,
     evidencias: m.fields, regras: m.checks, secoes: m.sections, revisoes: reviewRows(m),
   };
@@ -73,7 +79,7 @@ export function buildPdf(m: MinutaInput): jsPDF {
   };
   para(`Minuta de conferência — ${m.caseLabel}`, 14, true);
   para(DISCLAIMER, 8);
-  para(`Documento: ${m.docName}\nSHA-256: ${m.sha256}\nPáginas: ${m.numPages} · Recorte: ${modeLabel(m.mode)}\nGerado em: ${m.generatedAt}`, 8);
+  para(`Documento: ${m.docName}\nSHA-256: ${m.sha256}\nPáginas: ${m.numPages} · Recorte: ${modeLabel(m.mode, m.isBR01)}\nGerado em: ${m.generatedAt}`, 8);
   const table = (head: string[], body: string[][]) => {
     autoTable(doc, { startY: y, head: [head], body, theme: 'grid', styles: { fontSize: 7 }, headStyles: { fillColor: [20, 36, 80] }, margin: { left: 14, right: 14 } });
     y = (doc as any).lastAutoTable.finalY + 6;
@@ -89,12 +95,12 @@ export function buildPdf(m: MinutaInput): jsPDF {
   para('4. Pendências', 11, true);
   para(m.sections.pendencias);
   const rr = reviewRows(m);
-  if (rr.length) table(['Regra', 'Tipo', 'Responsável informado', 'Data', 'Situação', 'Observação'], rr.map((r) => [r.checkId, r.kind === 'conferido' ? 'Conferido' : 'Observação', r.reviewer, r.date.slice(0, 10), r.valid ? 'vigente' : 'invalidada', r.note]));
+  if (rr.length) table(['Regra', 'Tipo', 'Responsável informado', 'Data', 'Fonte do registro', 'Situação', 'Observação'], rr.map((r) => [r.checkId, r.kind === 'conferido' ? 'Conferido' : 'Observação', r.reviewer, r.date.slice(0, 10), r.fonte, r.valid ? 'vigente' : 'invalidada', r.note]));
   else para('Nenhuma revisão local registrada.', 8);
   para('5. Conclusão', 11, true);
   para(m.sections.conclusao, 9, true);
   const n = doc.getNumberOfPages();
-  for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFontSize(7); doc.text(`Grafter DueDD Ambiental · caso público · revisão técnica pendente · ${i}/${n}`, W / 2, 290, { align: 'center' }); }
+  for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFontSize(7); doc.text(`Grafter DueDD Ambiental · ${sourceLabel(m.isBR01)} · conferência documental · revisão técnica pendente · ${i}/${n}`, W / 2, 290, { align: 'center' }); }
   return doc;
 }
 
