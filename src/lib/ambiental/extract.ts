@@ -24,7 +24,7 @@ export interface PdfDocLike {
 
 export async function sha256Hex(bytes: ArrayBuffer | Uint8Array): Promise<string> {
   const buf = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
-  const h = await crypto.subtle.digest('SHA-256', buf);
+  const h = await crypto.subtle.digest('SHA-256', buf as Uint8Array<ArrayBuffer>);
   return [...new Uint8Array(h)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
