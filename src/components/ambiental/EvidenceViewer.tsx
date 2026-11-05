@@ -51,7 +51,7 @@ const EvidenceViewer = ({ bytes, field, onClose }: Props) => {
     <Dialog open={!!field} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-5xl w-[96vw] max-h-[92vh] overflow-hidden flex flex-col min-h-0 p-3 sm:p-6">
         <DialogHeader className="shrink-0">
-          <DialogTitle>Evidência · {field?.label} — página {field?.page}</DialogTitle>
+          <DialogTitle className="pr-8 text-base sm:text-lg">Evidência · {field?.label} — página {field?.page}</DialogTitle>
           <DialogDescription>
             Valor original <span className="font-mono text-foreground">{field?.raw} {field?.unit}</span> · {field?.section}
           </DialogDescription>
