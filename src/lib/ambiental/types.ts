@@ -66,4 +66,8 @@ export interface Review {
   reviewer: string;
   date: string; // ISO
   fingerprint: string; // documento + entradas dependentes no momento da revisão
+  // Proveniência (registros antigos podem não ter — nunca inventar)
+  docSha?: string;
+  docName?: string;
+  depsSnapshot?: Record<string, { raw: string; value: string; unit: string; page: number } | null>;
 }
