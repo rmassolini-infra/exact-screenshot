@@ -20,7 +20,7 @@ const AppLayout = () => {
         <div
           role="status"
           aria-label="Selo de conferência documental"
-          className="w-full bg-primary text-primary-foreground text-[11px] font-mono font-semibold tracking-wider text-center py-1.5 px-3 border-b border-primary/60 sticky top-0 z-[60]"
+          className="w-full whitespace-nowrap overflow-hidden bg-primary text-primary-foreground text-[9px] sm:text-[11px] font-mono font-semibold tracking-normal sm:tracking-wider text-center py-1.5 px-3 border-b border-primary/60 sticky top-0 z-[60]"
         >
           CONFERÊNCIA DOCUMENTAL · REVISÃO TÉCNICA PENDENTE
         </div>
