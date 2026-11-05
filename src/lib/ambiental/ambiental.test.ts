@@ -104,7 +104,7 @@ describe('negativos', () => {
   });
   it('alterar componente invalida subtotal, memória e revisão', () => {
     const base = evaluate(ex.fields);
-    const rev = { id: '1', checkId: 'R01', kind: 'conferido' as const, note: 'ok', reviewer: 'X', date: '', fingerprint: fingerprint(ex.sha256, ex.fields, base[0].dependencies) };
+    const rev = { id: '1', checkId: 'R01', kind: 'conferido' as const, note: 'ok', reviewer: 'X', date: '', fingerprint: fingerprint(ex.sha256, ex.fields, base[0].dependencies), docSha: ex.sha256, docName: 'BR01.pdf', depsSnapshot: {} };
     expect(reviewValid(rev, ex.sha256, ex.fields, base)).toBe(true);
     const f = structuredClone(ex.fields);
     f.fragmentos_nativos.value = Dec.parse(f.fragmentos_nativos.value).add(Dec.parse('1')).toString();
@@ -142,5 +142,24 @@ describe('minuta reflete a fonte atual', () => {
     const j = buildJson({ docName: 'BR01', caseLabel: 'BR01', sha256: ex.sha256, numPages: 24, mode: 'full', isBR01: true, fields: ex.fields, checks, sections: buildSections(ex.fields, checks), reviews: [r], generatedAt: 'x' });
     expect(j.revisoes[0].valid).toBe(false);
     expect(j.revisoes[0].fonte).toContain('velho.pdf');
+  });
+});
+
+describe('reviewValid exige proveniência', () => {
+  const mk = (extra: object) => {
+    const checks = evaluate(ex.fields);
+    return { checks, r: { id: '1', checkId: 'R01', kind: 'conferido' as const, note: '', reviewer: 'X', date: '', fingerprint: fingerprint(ex.sha256, ex.fields, checks[0].dependencies), ...extra } };
+  };
+  it('registro legado sem docSha/depsSnapshot → inválido', () => {
+    const { r, checks } = mk({});
+    expect(reviewValid(r, ex.sha256, ex.fields, checks)).toBe(false);
+  });
+  it('docSha divergente → inválido', () => {
+    const { r, checks } = mk({ docSha: 'outro', docName: 'x.pdf', depsSnapshot: {} });
+    expect(reviewValid(r, ex.sha256, ex.fields, checks)).toBe(false);
+  });
+  it('registro atual completo → válido', () => {
+    const { r, checks } = mk({ docSha: ex.sha256, docName: 'BR01.pdf', depsSnapshot: {} });
+    expect(reviewValid(r, ex.sha256, ex.fields, checks)).toBe(true);
   });
 });
