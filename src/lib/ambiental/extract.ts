@@ -135,11 +135,9 @@ export function extractFields(pages: PageText[], sha256: string): Omit<Extractio
     const { pt, m } = hits[0];
     const raw = m[1];
     const unit = s.unit ?? m[2].replace('m3', 'm³');
-    const vStart = m.index + m[0].indexOf(raw, m[0].length - m[0].length);
     // posição exata do número dentro do match
     const rel = s.method === 'native_table' ? m[0].lastIndexOf(raw) : m[0].indexOf(raw);
     const a = m.index + rel, b = a + raw.length;
-    void vStart;
     let value: string;
     try { value = Dec.fromBR(raw).toString(); } catch { issues.push(`${s.label}: número "${raw}" não reconhecido.`); continue; }
     const other: { page: number; context: string }[] = [];
