@@ -22,22 +22,43 @@ export interface SavedState {
 }
 
 const DB = 'duedd-ambiental', STORE = 'kv', KEY = 'current';
-function db(): Promise<IDBDatabase> {
+
+function openDb(): Promise<IDBDatabase> {
   return new Promise((res, rej) => {
-    const r = indexedDB.open(DB, 1);
+    let r: IDBOpenDBRequest;
+    try { r = indexedDB.open(DB, 1); } catch (e) { rej(e); return; }
     r.onupgradeneeded = () => r.result.createObjectStore(STORE);
     r.onsuccess = () => res(r.result);
-    r.onerror = () => rej(r.error);
+    r.onerror = () => rej(r.error ?? new Error('Falha ao abrir o armazenamento do navegador.'));
+    r.onblocked = () => rej(new Error('Armazenamento do navegador bloqueado por outra aba.'));
   });
 }
+
+/** Resolve só quando a transação completa (oncomplete); rejeita em onerror/onabort. Sempre fecha o banco. */
 async function tx<T>(mode: IDBTransactionMode, fn: (s: IDBObjectStore) => IDBRequest<T>): Promise<T> {
-  const d = await db();
-  return new Promise((res, rej) => {
-    const req = fn(d.transaction(STORE, mode).objectStore(STORE));
-    req.onsuccess = () => res(req.result);
-    req.onerror = () => rej(req.error);
-  });
+  const db = await openDb();
+  try {
+    return await new Promise<T>((res, rej) => {
+      let result: T;
+      let t: IDBTransaction;
+      try {
+        t = db.transaction(STORE, mode);
+        const req = fn(t.objectStore(STORE));
+        req.onsuccess = () => { result = req.result; };
+      } catch (e) { rej(e); return; }
+      t.oncomplete = () => res(result);
+      t.onerror = () => rej(t.error ?? new Error('Erro na transação do armazenamento.'));
+      t.onabort = () => rej(t.error ?? new Error('Transação do armazenamento abortada (possível falta de espaço).'));
+    });
+  } finally { db.close(); }
 }
+
 export const loadState = () => tx<SavedState | undefined>('readonly', (s) => s.get(KEY));
 export const saveState = (v: SavedState) => tx('readwrite', (s) => s.put(v, KEY));
 export const clearState = () => tx('readwrite', (s) => s.delete(KEY));
+
+export function storageErrorMessage(e: unknown): string {
+  const name = (e as any)?.name ?? '';
+  if (name === 'QuotaExceededError') return 'Espaço de armazenamento do navegador esgotado.';
+  return (e as any)?.message || String(e);
+}
