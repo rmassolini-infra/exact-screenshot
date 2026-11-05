@@ -122,3 +122,25 @@ describe('negativos', () => {
     expect(ex.fields.cedro_madeira.unit).toBe('m²');
   });
 });
+
+describe('minuta reflete a fonte atual', () => {
+  it('documento não BR01: recorte "Documento completo", sem rótulo de caso público', async () => {
+    const { buildMarkdown, buildJson, modeLabel } = await import('./minuta');
+    expect(modeLabel('p3', false)).toBe('Documento completo');
+    const fields = { total_nativo: { ...ex.fields.total_nativo, value: '1000' } };
+    const checks = evaluate(fields);
+    const m = { docName: 'meu.pdf', caseLabel: 'Documento do usuário: meu.pdf', sha256: 'abc', numPages: 1, mode: 'full' as const, isBR01: false, fields, checks, sections: buildSections(fields, checks), reviews: [], generatedAt: 'x' };
+    const md = buildMarkdown(m);
+    expect(md).toContain('Recorte: Documento completo');
+    expect(md).not.toMatch(/Caso público|p\. 7/);
+    expect(buildJson(m).fonte).toBe('Documento do usuário');
+  });
+  it('revisão de outro documento aparece com a fonte e invalidada', async () => {
+    const { buildJson } = await import('./minuta');
+    const checks = evaluate(ex.fields);
+    const r = { id: '1', checkId: 'R01', kind: 'conferido' as const, note: '', reviewer: 'X', date: '', fingerprint: fingerprint('outro', ex.fields, checks[0].dependencies), docSha: 'outro', docName: 'velho.pdf' };
+    const j = buildJson({ docName: 'BR01', caseLabel: 'BR01', sha256: ex.sha256, numPages: 24, mode: 'full', isBR01: true, fields: ex.fields, checks, sections: buildSections(ex.fields, checks), reviews: [r], generatedAt: 'x' });
+    expect(j.revisoes[0].valid).toBe(false);
+    expect(j.revisoes[0].fonte).toContain('velho.pdf');
+  });
+});
